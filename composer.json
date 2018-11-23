@@ -1,0 +1,26 @@
+{
+    "require": {
+        "slim/slim": "^3.9",
+        "twig/twig": "<2",
+        "slim/twig-view": "^2.3",
+        "kaoken/markdown-it-php": "^8.4",
+        "symfony/console": "^3.4",
+        "vlucas/phpdotenv": "^2.4"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "": ["app/"]
+        }
+    },
+    "scripts": {
+        "post-install-cmd": "@cc",
+        "post-update-cmd":  "@cc",
+        "cc": "rm -rf cache/*",
+        "check": [ "@cbf", "@cs" ],
+        "cbf": "phpcbf -sp --colors --standard=PSR2 app/* routes/* sql/*",
+        "cs":  "phpcs  -sp --colors --standard=PSR2 app/* routes/* sql/*"
+    }
+}

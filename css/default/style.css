@@ -1,0 +1,76 @@
+body {
+    padding-top: 70px;
+}
+
+.navbar-brand img {
+    width: 32px;
+    height: 32px;
+}
+
+a {
+    color: rgb(128,0,0);
+    text-decoration: none !important;
+}
+
+th.count, td.count {
+    font-family: monospace;
+    font-size: 120%;
+    text-align: right;
+    border-left: solid white 1px;
+    border-top: solid white 1px;
+}
+
+textarea, input[type=text], input[type=number] {
+    font-family: monospace;
+    font-size: 120% !important;
+}
+
+.tt {
+    font-family: monospace;
+}
+
+table .form-inline {
+    margin: 0;
+}
+
+.input-group.spinner {
+    width: 9rem;
+}
+
+.input-group.spinner input {
+    text-align: center
+}
+
+.input-group.spinner .input-group-addon a {
+    color: #808080;
+}
+
+.input-group.input-group-lg.spinner .input-group-addon a {
+    font-size: 1.2rem;
+    height: 1.4rem;
+}
+
+.input-group.input-group-sm.spinner .input-group-addon a {
+    font-size: .8rem;
+    height: .6rem;
+}
+
+.g-translate {
+    font-size: smaller;
+}
+/* Extend Bootstrap */
+.btn {
+    cursor: pointer;
+}
+
+.w-1 {
+    width: 1%;
+}
+
+.text-bold {
+    font-weight: bold;
+}
+
+.text-italic {
+    font-style: italic;
+}

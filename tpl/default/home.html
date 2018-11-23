@@ -1,0 +1,93 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+{% include 'code-select.html' %}
+
+<div class="row">
+    <div class="col">
+        <table class="table table-striped summary">
+
+        <thead class="thead-dark">
+            <tr>
+                <th class="w-1 text-center">
+                    <i class="fa fa-sliders"></i>
+                </th>
+                <th class="w-75">{{ t.TranslationSets }}</th>
+                {% for row in lang_rows if row.active %}
+                    <th class="count">
+                        <span class="d-lg-none" data-toggle="tooltip"
+                              title="{{ row.desc }} ({{ row.code }})" data-placement="bottom">
+                            {{ row.code }}
+                        </span>
+                        <span class="d-none d-lg-block" data-toggle="tooltip"
+                              title="{{ row.code }}" data-placement="bottom">
+                            {{ row.desc }}
+                        </span>
+                    </th>
+                {% endfor %}
+                {% if set_rows|length and can_delete %}
+                    <th></th>
+                {% endif %}
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for row in set_rows %}
+                <tr>
+                    <td>
+                        {{ macros.adminflags(row.admin) }}
+                    </td>
+                    <td>
+                        <a href="{{ pathFor('list', {'set': row.code}) }}">{{ row.desc }}</a>
+                    </td>
+
+                    {% if row.cols ?? false %}
+                        {% for col in row.cols %}
+                            {# Mark edit state for translations #}
+                            <td class="count alert-{{ col.count == row.count ? 'success' : 'warning' }}">
+                                <a href="{{ pathFor('list', {'set': row.code, 'lang': native, 'lang2': col.lang2}) }}">{{ col.count }}</a>
+                            </td>
+                        {% endfor %}
+                        {% if can_delete %}
+                            <td>
+                                <form class="form-inline" action="{{ pathFor('POST delete') }}" method="post">
+                                <input type="hidden" name="set" value="code_set" >
+                                <input type="hidden" name="code" value="{{ row.code }}" >
+                                <button type="submit" class="confirm-delete btn btn-sm btn-{{ row.active ? 'danger' : 'secondary' }}"
+                                        data-toggle="tooltip" title="{{ t.Delete }}">
+                                    <i class="fa fa-fw fa-trash-o"></i>
+                                </button>
+                                </form>
+                            </td>
+                        {% endif %}
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+
+        {% if set_rows|length %}
+        <tfoot class="thead-dark">
+            <tr>
+                <th colspan="2">
+                    {% if todo_rows %}
+                        {{ t.NeedsTranslation(todo_count, todo_rows) }}
+                    {% endif %}
+                </th>
+                {% for total in totals %}
+                    <th class="count">{{ total }}</th>
+                {% endfor %}
+                {% if can_delete %}
+                    <th></th>
+                {% endif %}
+            </tr>
+        </tfoot>
+        {% endif %}
+
+        </table>
+    </div>
+</div>
+
+{% include 'footer.html' %}
+
+{% endblock %}

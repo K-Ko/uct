@@ -1,0 +1,66 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+{% include 'code-select.html' %}
+
+<div class="row mb-2">
+    <div class="col">
+        <h2>{{ t.CreateSlaveSet }}</h2>
+    </div>
+</div>
+
+<form action="{{ pathFor('POST slave') }}" method="post">
+
+<div class="row form-group">
+    <label class="col-md-2 col-form-label" for="set-code">{{ t.Set }}</label>
+    <div class="col col-sm-6 col-md-4 col-lg-3">
+        <input id="set-code" class="form-control" type="text" name="set" maxlength="16" required>
+        <span class="text-muted">{{ t.CodeMaxChars(16) }}</span>
+    </div>
+</div>
+
+<div class="row form-group">
+    <label class="col-md-2 col-form-label" for="set-code">{{ t.Name }}</label>
+    <div class="col col-lg-7 col-xl-6">
+        <input id="set-code" class="form-control" type="text" name="desc" maxlength="50" required>
+        <span class="text-muted">{{ t.CodeMaxChars(50) }}</span>
+    </div>
+</div>
+
+<div class="row form-group">
+    <label class="col-md-2 col-form-label" for="input-order">{{ t.CodeOrderIncrement }}</label>
+    <div class="col">
+        <div class="input-group input-group-sm spinner" data-trigger="spinner">
+            <span class="input-group-addon">
+                <a href="javascript:;" data-spin="down"><i class="fa fa-minus"></i></a>
+            </span>
+            <input id="input-order" class="form-control" type="text" data-rule="quantity"
+                   name="order" value="10" pattern="[0-9]*">
+            <span class="input-group-addon">
+                <a href="javascript:;" data-spin="up"><i class="fa fa-plus"></i></a>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="row form-group">
+    <label class="col-md-2 col-form-label" for="slave-data">{{ t.SlaveSetData }}</label>
+    <div class="col">
+        <textarea id="slave-data" class="form-control" name="data" rows="15" required></textarea>
+        <p class="text-muted">{{ t.SlaveSetDataHint }}</p>
+    </div>
+</div>
+
+<div class="row">
+        <div class="col-md-2"></div>
+        <div class="col">
+        <button type="submit" class="btn btn-primary">
+            <i class="fa fa-fw fa-floppy-o"></i> {{ t.Save }}
+        </button>
+    </div>
+</div>
+
+</form>
+
+{% endblock %}

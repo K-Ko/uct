@@ -1,0 +1,9 @@
+{% if flash ?? false %}
+<div id="flash" class="row">
+    <div class="col">
+        <div class="alert alert-{{ flash.type ?? 'success' }}">
+            {{ t.h(flash.message) }}
+        </div>
+    </div>
+</div>
+{% endif %}

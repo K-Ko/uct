@@ -1,0 +1,16 @@
+<div class="row">
+    <div class="col h3">{{ t.SelectSetLanguage }}</div>
+</div>
+
+<form class="form-inline mx-auto" action="/" method="post">
+
+<div class="row">
+    <div class="col">
+        <select name="set" class='form-control mr-md-1'>{{ IndexCodeSetSelect }}</select>
+        <select name="lang" class='form-control mr-md-1'>{{ IndexLanguageSelect }}</select>
+        <select name="lang2" class='form-control mr-md-2'>{{ IndexLanguage2Select }}</select>
+        <input type='submit' class='btn btn-secondary mt-1 mt-md-0' value="{{ t.ViewSet }}">
+    </div>
+</div>
+
+</form>
