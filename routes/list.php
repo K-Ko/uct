@@ -60,6 +60,6 @@ $app->get(
             }
         }
 
-        return $this->view->render($response, 'list.html', $data);
+        return $this->view->render($response, 'list.twig', $data);
     }
 )->setName('list');

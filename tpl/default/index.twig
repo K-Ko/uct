@@ -1,4 +1,4 @@
-{% import 'macros.html' as macros %}
+{% import 'macros.twig' as macros %}
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,12 +21,12 @@
     <link rel="stylesheet" href="/css/{{ layout }}/style.css">
 </head>
 <body>
-    {% include 'nav.html' %}
+    {% include 'nav.twig' %}
     <div class="container">
-        {% include 'flash.html' %}
+        {% include 'flash.twig' %}
         {% block content %}{% endblock %}
     </div>
-    {% include 'scripts.html' %}
-    {% include 'confirm.html' %}
+    {% include 'scripts.twig' %}
+    {% include 'confirm.twig' %}
 </body>
 </html>

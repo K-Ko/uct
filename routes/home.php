@@ -65,7 +65,7 @@ $app->get(
 
         return $this->view->render(
             $response,
-            'home.html',
+            'home.twig',
             [
                 'lang_rows'  => $lang_rows,
                 'set_rows'   => $set_rows,

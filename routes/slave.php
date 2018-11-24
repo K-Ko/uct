@@ -12,7 +12,7 @@ use Core\Session;
 $app->get(
     '/slave',
     function (Request $request, Response $response, array $args) {
-        return $this->view->render($response, 'slave.html');
+        return $this->view->render($response, 'slave.twig');
     }
 )->setName('slave');
 

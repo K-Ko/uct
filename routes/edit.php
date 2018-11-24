@@ -113,7 +113,7 @@ $app->get(
 
         $data['desc'] = $this['editor']->desc('code_set', null, $data['set']);
 
-        return $this->view->render($response, 'edit.html', $data);
+        return $this->view->render($response, 'edit.twig', $data);
     }
 )->setName('edit');
 

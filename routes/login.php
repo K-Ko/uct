@@ -12,7 +12,7 @@ use Core\Session;
 $app->get(
     '/login',
     function (Request $request, Response $response, array $args) {
-        return $this->view->render($response, 'login.html');
+        return $this->view->render($response, 'login.twig');
     }
 )->setName('login');
 
