@@ -39,7 +39,7 @@ class SqlBootstrapCommand extends BaseCommand
         $this
         ->setName('sql:bootstrap')
         ->setDescription($this->title)
-        ->addArgument('language', InputArgument::REQUIRED, 'Primary language, mostly "en"; one of (en|de|fr)');
+        ->addArgument('native', InputArgument::REQUIRED, 'Primary language, mostly "en"; one of (en|de|fr)');
     }
 
     /**
@@ -47,13 +47,13 @@ class SqlBootstrapCommand extends BaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $language = strtolower($input->getArgument('language'));
+        $native = strtolower($input->getArgument('native'));
 
-        if (!in_array($language, $this->languages)) {
+        if (!in_array($native, $this->languages)) {
             $io = new SymfonyStyle($input, $output);
             $io->title($this->title);
             $io->error(
-                'Invalid language: ' . $language .
+                'Invalid language: ' . $native .
                 ' - Must be one of (' . implode('|', $this->languages) . ')!'
             );
             exit;
@@ -61,13 +61,15 @@ class SqlBootstrapCommand extends BaseCommand
 
         $command = $this->getApplication()->find('sql:load');
 
-        $arguments = [
-            'command'  => 'sql:load',
-            'file'     => $this->baseDir.'/sql/bootstrap.sql',
-            'language' => $language
-        ];
+        // Bootstrap
+        foreach (glob('sql/bootstrap/*.sql') as $file) {
+            $arguments = [
+                'command' => 'sql:load',
+                'file'    => $file,
+                'native'  => $native
+            ];
 
-        $initInput = new ArrayInput($arguments);
-        $command->run($initInput, $output);
+            $command->run(new ArrayInput($arguments), $output);
+        }
     }
 }

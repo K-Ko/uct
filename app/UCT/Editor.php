@@ -144,38 +144,14 @@ class Editor extends UCT
     }
 
     /**
-     * Remove a code completely.
-     */
-    public function removeData($set, $code)
-    {
-        $this->query($this->queries['remove'][0], $set, $code);
-
-        // Delete whole set?
-        if ($set == 'code_set') {
-            // Remove code_admin entry
-            $this->query($this->queries['remove'][1], $code);
-            // Remove remaining codes
-            $this->query($this->queries['remove'][2], $code);
-        }
-    }
-
-    /**
      *
      */
     public function adminGet($set)
     {
-        $admin = array('param' => '', 'slave' => '', 'multi' => '');
-
-        if ($params = $this->param('code_admin', $set)) {
-            $params = explode(' ', $params);
-            foreach ($params as $n => $param) {
-                if (preg_match('~^(.+?)=(.*)$~', $param, $args)) {
-                    $admin[$args[1]] = $args[2];
-                }
-            }
-        }
-
-        return $admin;
+        return array_merge(
+            [ 'param' => 0, 'slave' => 0, 'multi' => 0 ],
+            (array) json_decode($this->param('code_admin', $set), true)
+        );
     }
 
     /**
@@ -183,15 +159,17 @@ class Editor extends UCT
      */
     public function adminPut($set, $admin = [])
     {
-        $params = [];
+        $admin = array_filter(array_merge(
+            [ 'param' => 0, 'slave' => 0, 'multi' => 0 ],
+            $admin
+        ));
 
-        foreach (['param', 'slave', 'multi'] as $attr) {
-            if (array_key_exists($attr, $admin) && $admin[$attr]) {
-                $params[] = $attr . '=' . $admin[$attr];
-            }
-        }
-
-        $this->putData('code_admin', $this->native, $set, implode(' ', $params));
+        $this->putData(
+            'code_admin',
+            $this->native,
+            $set,
+            count($admin) ? json_encode($admin) : ''
+        );
     }
 
     /**
@@ -341,12 +319,6 @@ class Editor extends UCT
 
         'delete' =>
             'DELETE FROM `{TABLE}`
-              WHERE `set` = "%s" AND `lang` = "%s" AND `code` = "%s"',
-
-        'remove' => [
-            'DELETE FROM `{TABLE}` WHERE `set` = "%s" AND `code` = "%s"',
-            'DELETE FROM `{TABLE}` WHERE `set` = "code_admin" AND `code` = "%s"',
-            'DELETE FROM `{TABLE}` WHERE `set` = "%s"'
-        ]
+              WHERE `set` = "%s" AND `lang` = "%s" AND `code` = "%s"'
     ];
 }

@@ -39,7 +39,7 @@ class SqlListCommand extends BaseCommand
 
         $io->listing(
             array_map(function ($f) {
-                return realpath($f);
+                return 'sql/' . basename($f);
             }, glob($this->baseDir.'/sql/*.sql'))
         );
     }

@@ -9,26 +9,27 @@
     <a name="edit"></a>
 
     <div class="row">
-        <div class="col">
-            <h3>
-                {{ desc }}
-                {%- if code != '' -%}
-                    <i class="fa fa-fw fa-ellipsis-v"></i>
-                    {{- code -}}
-                {%- endif -%}
-                {% if nav.count > 1 %}
-                    <span class="ml-2 text-muted small">
-                        ({{ t.NumberOfMany(nav.pos, nav.count) }})
-                    </span>
-                {% endif %}
-            </h3>
-            <p class="text-muted">
-                {% if code_admin.param %}
-                    {{ t.ParameterSetHint }}
-                {% elseif code_admin.slave %}
-                    {{ t.SlaveSetHint }}
-                {% endif %}
-            </p>
+        <div class="col h3 text-center">
+            {{ desc }}
+            {%- if code != '' -%}
+                <i class="fa fa-fw fa-ellipsis-v"></i>
+                {{- code -}}
+            {%- endif -%}
+        </div>
+        <div class="col text-center mt-2">
+            {% if nav.count > 1 %}
+                ({{ t.NumberOfMany(nav.pos, nav.count) }})
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col text-muted text-center">
+            {% if code_admin.param %}
+                {{ t.ParameterSetHint }}
+            {% elseif code_admin.slave %}
+                {{ t.SlaveSetHint }}
+            {% endif %}
         </div>
     </div>
 
@@ -127,11 +128,17 @@
                 {% endif %}
             {% else %}
                 {{ macros.input_hidden('active', active ? 1) }}
-                {{ macros.input_hidden('quantity', quantity ? 0) }}
                 {% if not active %}
                     <div class="form-group row">
-                        <div class="col-md-3">{{ t.Deprecated }}</div>
-                        <div class="col form-text text-muted">{{ t.DeprecatedHint }}</div>
+                        <div class="col-md-3"></div>
+                        <div class="col form-text">{{ t.DeprecatedHint }}</div>
+                    </div>
+                {% endif %}
+                {{ macros.input_hidden('quantity', quantity ? 0) }}
+                {% if quantity %}
+                    <div class="form-group row">
+                        <div class="col-md-3"></div>
+                        <div class="col form-text">{{ t.WithQuantityHint }}</div>
                     </div>
                 {% endif %}
             {% endif %}
@@ -190,7 +197,7 @@
                     </label>
                     <div class="col">
                         {% if not logged_in and row.code == native %}
-                            <p class="form-control-plaintext">{{ row.code_desc|e }}</p>
+                            <p class="form-control-plaintext">{{ row.code_desc|e|nl2br }}</p>
                         {% else %}
                             {% if multi %}
                                 <textarea class="form-control" name="desc[{{ row.code }}]" rows="5">{{ row.code_desc|e }}</textarea>

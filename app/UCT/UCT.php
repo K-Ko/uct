@@ -232,7 +232,7 @@ class UCT
                 if ($v != '') {
                     $n[trim($k)] = trim($v);
                 } else {
-                    $n['*'] = trim($k . ' *');
+                    $n['*'] = trim($k);
                 }
             }
 
@@ -246,7 +246,6 @@ class UCT
                 throw new Exception('Missing entry "n" for '.$set.'::'.$code.'('.$lang.')');
             }
         }
-
         return is_array($args) ? vsprintf($desc, $args) : $desc;
     }
 
@@ -705,6 +704,21 @@ class UCT
         return isset($result[0]) ? $result[0] : null;
     }
 
+    /**
+     * Remove a code completely.
+     */
+    public function remove($set, $code)
+    {
+        $this->query($this->queries['remove'][0], $set, $code);
+
+        // Delete whole set?
+        if ($set == 'code_set') {
+            // Remove code_admin entry
+            $this->query($this->queries['remove'][1], $code);
+            // Remove remaining codes
+            $this->query($this->queries['remove'][2], $code);
+        }
+    }
     // -----------------------------------------------------------------------
     // PROTECTED
     // -----------------------------------------------------------------------
@@ -754,7 +768,13 @@ class UCT
                 AND l.`lang` = "%s"
                 AND n.`lang` = "%s"
               GROUP BY l.`code`, l.`desc`
-              ORDER BY n.`order`, n.`code`'
+              ORDER BY n.`order`, n.`code`',
+
+        'remove' => [
+            'DELETE FROM `{TABLE}` WHERE `set` = "%s" AND `code` = "%s"',
+            'DELETE FROM `{TABLE}` WHERE `set` = "code_admin" AND `code` = "%s"',
+            'DELETE FROM `{TABLE}` WHERE `set` = "%s"'
+        ]
     ];
 
     /**

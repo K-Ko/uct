@@ -33,7 +33,7 @@ class SqlLoadCommand extends BaseCommand
         ->setDescription($this->title)
         ->setHelp('Load SQL file into database.')
         ->addArgument('file', InputArgument::REQUIRED, 'SQL File to load')
-        ->addArgument('language', InputArgument::OPTIONAL);
+        ->addArgument('native', InputArgument::OPTIONAL);
     }
 
     /**
@@ -58,9 +58,18 @@ class SqlLoadCommand extends BaseCommand
         $sql = file_get_contents($file);
         $sql = str_replace('{{TABLE}}', getenv('DBTABLE'), $sql);
 
-        if ($language = $input->getArgument('language')) {
-            $sql = str_replace('{{PRIMARY}}', $language, $sql);
+        $native = $input->getArgument('native');
+
+        if ($native == '') {
+            // Find native in database
+            $sql1 = 'SELECT `lang` FROM `' . getenv('DBTABLE') . '` ' .
+                    ' WHERE `set` = "code_admin" AND `code` = "code_admin"';
+            if ($res = $this->db->query($sql1)) {
+                $native = $res->fetch_row()[0];
+            }
         }
+
+        $sql = str_replace('{{NATIVE}}', $native, $sql);
 
         if ($this->db->multi_query($sql)) {
             while ($this->db->next_result()) {

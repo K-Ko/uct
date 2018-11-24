@@ -32,7 +32,7 @@ $app->post(
             return $response->withRedirect($url, 200);
         }
 
-        $this['editor']->removeData($params['set'], $params['code']);
+        $this['editor']->remove($params['set'], $params['code']);
         Session::flash('CodeDeleted');
 
         if (isset($params['next'])) {
