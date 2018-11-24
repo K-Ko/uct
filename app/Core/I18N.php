@@ -113,9 +113,13 @@ class I18N
 
         $desc = $this->uct->render($set, $this->language, $code, $args);
 
+        if ($desc == '') {
+            $desc = $code;
+        }
+
         if ($desc == $code) {
             // "UpperCamelCase" > "Upper Camel Case"
-            return trim(preg_replace('~([A-Z])~', ' $1', $desc));
+            return trim(preg_replace('~[A-Z]~', ' $0', $desc));
         }
 
         return $this->md->renderInline($desc);

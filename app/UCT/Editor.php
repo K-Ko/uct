@@ -60,6 +60,8 @@ class Editor extends UCT
         }
 
         $desc = trim(str_replace(["\r\n", "\r"], "\n", $desc));
+        // Quantity strings
+        $desc = str_replace('%', '%%', $desc);
 
         // add, update, or delete
         if ($old) {

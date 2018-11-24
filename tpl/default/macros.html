@@ -8,8 +8,12 @@
         <div class="col">
             <div class="form-check">
                 <label class="form-check-label text-muted small">
-                    <input class="form-check-input" type="{{ type }}" name="admin[]"
-                           value="{{ name }}" {{ checked ? 'checked' }}>
+                    <input
+                        class="form-check-input"
+                        type="{{ type }}"
+                        name="admin[]"
+                        value="{{ name }}"
+                        {{ checked ? 'checked' }}>
                     {{ hint }}
                 </label>
             </div>
@@ -23,8 +27,12 @@
         <div class="col">
             <div class="form-check">
                 <label class="form-check-label text-muted small">
-                    <input class="form-check-input" type="{{ type }}" name="admin[]"
-                           value="{{ name }}" {{ checked ? 'checked' }}>
+                    <input
+                        class="form-check-input"
+                        type="{{ type }}"
+                        name="admin[]"
+                        value="{{ name }}"
+                        {{ checked ? 'checked' }}>
                     {{ hint }}
                 </label>
             </div>
@@ -38,8 +46,11 @@
         <div class="col">
             <div class="form-check">
                 <label class="form-check-label text-muted small">
-                    <input class="form-check-input" type="{{ type }}"
-                           name="{{ name }}" {{ checked ? 'checked' }}>
+                    <input
+                        class="form-check-input"
+                        type="{{ type }}"
+                        name="{{ name }}"
+                        {{ checked ? 'checked' }}>
                     {{ hint }}
                 </label>
             </div>
@@ -49,8 +60,11 @@
 
 {% macro adminflags(admin) %}
     {% spaceless %}
-    {% if admin.param %}<span data-toggle="tooltip" title="{{ t.ParameterSet }}">P</span>{% endif %}
-    {% if admin.slave %}<span data-toggle="tooltip" title="{{ t.SlaveSet }}">S</span>{% endif %}
-    {% if admin.multi %}<span data-toggle="tooltip" title="{{ t.MultilineSet }}">M</span>{% endif %}
+        {% if admin.param %}
+            <span data-toggle="tooltip" title="{{ t.ParameterSet }}">P</span>{% endif %}
+        {% if admin.slave %}
+            <span data-toggle="tooltip" title="{{ t.SlaveSet }}">S</span>{% endif %}
+        {% if admin.multi %}
+            <span data-toggle="tooltip" title="{{ t.MultilineSet }}">M</span>{% endif %}
     {% endspaceless %}
 {% endmacro adminflags %}

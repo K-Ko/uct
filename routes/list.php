@@ -51,7 +51,7 @@ $app->get(
             unset($lang_lookup);
         }
 
-        $data['set_desc']  = $this['editor']->ucwords('code_set', $this['editor']->native, $data['set']);
+        $data['set_desc']  = $this['editor']->desc('code_set', null, $data['set']);
 
         $data['set_rows'] = [];
         foreach ($base_set as $row) {

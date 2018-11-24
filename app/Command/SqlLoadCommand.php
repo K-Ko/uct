@@ -32,7 +32,8 @@ class SqlLoadCommand extends BaseCommand
         ->setName('sql:load')
         ->setDescription($this->title)
         ->setHelp('Load SQL file into database.')
-        ->addArgument('file', InputArgument::REQUIRED, 'SQL File to load');
+        ->addArgument('file', InputArgument::REQUIRED, 'SQL File to load')
+        ->addArgument('language', InputArgument::OPTIONAL);
     }
 
     /**
@@ -54,7 +55,12 @@ class SqlLoadCommand extends BaseCommand
 
         $io->text('Process <info>'.$file. '</info> ...');
 
-        $sql = str_replace('{{TABLE}}', getenv('DBTABLE'), file_get_contents($file));
+        $sql = file_get_contents($file);
+        $sql = str_replace('{{TABLE}}', getenv('DBTABLE'), $sql);
+
+        if ($language = $input->getArgument('language')) {
+            $sql = str_replace('{{PRIMARY}}', $language, $sql);
+        }
 
         if ($this->db->multi_query($sql)) {
             while ($this->db->next_result()) {

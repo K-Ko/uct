@@ -12,6 +12,8 @@ use Core\Session;
 $app->get(
     '/edit/{set}[/{code}[/{lang}[/{lang2}]]]',
     function (Request $request, Response $response, array $args) {
+        $native = $this['editor']->native;
+
         $data = array_merge(
             [
                 'code'     => '',
@@ -41,7 +43,7 @@ $app->get(
             }
         }
 
-        $code = $this['editor']->get($data['set'], $this['editor']->native, $data['code']);
+        $code = $this['editor']->get($data['set'], $native, $data['code']);
 
         if (!empty($code)) {
             $data = array_merge($data, $code);
@@ -54,8 +56,8 @@ $app->get(
             // Parameter set, only native language
             $data['lang_rows'] = [
                 [
-                    'code'   => $this['editor']->native,
-                    'desc'   => $this['editor']->desc('code_lang', Session::get('language'), $this['editor']->native),
+                    'code'   => $native,
+                    'desc'   => $this['editor']->desc('code_lang', Session::get('language'), $native),
                     'order'  => 0,
                     'active' => 1
                 ]
@@ -89,21 +91,27 @@ $app->get(
 
             $row['desc'] = ucfirst($row['desc']);
             $row['code_desc'] = $this['editor']->data($data['set'], $row['code'], $data['code']);
-            $nat_desc = urlencode($this['editor']->data($data['set'], $this['editor']->native, $data['code']));
+            $nat_desc = urlencode($this['editor']->data($data['set'], $native, $data['code']));
 
-            if ($row['code'] == $this['editor']->native) {
-                $row['translate_url'] = '';
+            if ($row['code'] == $native) {
+                $row['translate'] = null;
             } else {
-                $row['translate_url'] = sprintf(
+                $row['translate'][0] = sprintf(
                     'https://translate.google.com/#%s/%s/%s',
-                    substr($this['editor']->native, 0, 2),
+                    substr($native, 0, 2),
+                    substr($row['code'], 0, 2),
+                    $nat_desc
+                );
+                $row['translate'][1] = sprintf(
+                    'https://www.deepl.com/translator#%s/%s/%s',
+                    substr($native, 0, 2),
                     substr($row['code'], 0, 2),
                     $nat_desc
                 );
             }
         }
 
-        $data['desc'] = $this['editor']->ucwords('code_set', $this['editor']->native, $data['set']);
+        $data['desc'] = $this['editor']->desc('code_set', null, $data['set']);
 
         return $this->view->render($response, 'edit.html', $data);
     }

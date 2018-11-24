@@ -79,8 +79,8 @@ class Middleware
                 'select_prompt' => $c->i18n->CodeSet . ' ?',
                 'blank_prompt'  => $c->i18n->AllCodes,
                 'subset'        => $c->config['CODESETS'],
-                'value'         => $loggedIn && isset($args['set']) ? $args['set'] : '',
-                'exclude'       => $loggedIn ? [] : ['code_set', 'code_lang', 'code_editor'],
+                'value'         => isset($args['set']) ? $args['set'] : '',
+                'exclude'       => $loggedIn ? [] : ['code_set', 'code_lang', 'code_editor', 'code_editor_cfg'],
             ]
         );
 

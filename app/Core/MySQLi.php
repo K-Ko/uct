@@ -42,7 +42,7 @@ class MySQLi extends \MySQLi
         $result = parent::query($query);
 
         if ($this->errno) {
-            throw new \Exception($this->errno);
+            throw new \Exception($this->error . ' (' . $query . ')', $this->errno);
         }
 
         if ($isSelect) {

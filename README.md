@@ -1,4 +1,5 @@
 # uct
+
 ## Universal Code Translation
 
 ### Prepare packages
@@ -7,18 +8,18 @@
 
 ### Init
 
-    app/console app:init
+    ./uct app:init
 
 ### Bootstrap database
 
-    app/console sql:bootstrap
+    ./uct sql:bootstrap
 
 ### Seed database with some add. codes
 
 Check for available SQLs with
 
-    app/console sql:list
+    ./uct sql:list
 
 Load with
 
-    app/console sql:load <file name>
+    ./uct sql:load <file name>

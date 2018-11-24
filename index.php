@@ -114,9 +114,13 @@ $container['db'] = function ($c) {
 };
 
 $container['editor'] = function ($c) {
-    return new Editor(
-        [ 'db' => $c['db'], 'table' => $c['config']['DBTABLE'] ]
-    );
+    try {
+        return new Editor(
+            [ 'db' => $c['db'], 'table' => $c['config']['DBTABLE'] ]
+        );
+    } catch (Exception $e) {
+        die('<h1>Something went wrong</h1><pre>' . $e->getMessage());
+    }
 };
 
 $container['i18n'] = function ($c) {
@@ -169,9 +173,15 @@ $container['view'] = function ($c) {
     // Translation
     $twigEnv->addGlobal('t', $c['i18n']);
 
-    $twigEnv->addFunction(new Twig_SimpleFunction('pathFor', function ($name, $args = []) use ($c) {
-        return $c->router->pathFor($name, $args);
-    }));
+    $twigEnv->addFunction(
+        new Twig_SimpleFunction(
+            'pathFor',
+            function ($name, $args = []) use ($c) {
+                // Remove trailing slash, mostly if lang2 is not set
+                return rtrim($c->router->pathFor($name, $args), '/');
+            }
+        )
+    );
 
     return $twig;
 };
@@ -211,6 +221,8 @@ if (getenv('ENVIRONMENT') == 'development') {
     $dumper = new Twig_Profiler_Dumper_Text();
     echo '<div class="container"><hr><pre>';
     echo $dumper->dump($container['profiler']);
+    echo '<!-- ';
     echo '----------------------------------------------------------------------', PHP_EOL;
     print_r($container['db']->queries);
+    echo '-->';
 }

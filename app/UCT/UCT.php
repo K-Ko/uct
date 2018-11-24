@@ -204,7 +204,16 @@ class UCT
      */
     public function render($set, $lang, $code, $args = null)
     {
-        $data = $this->get($set, $lang, $code);
+        if (is_null($lang)) {
+            $lang = $this->native;
+        }
+
+        $native = $this->get($set, $this->native, $code);
+        $data   = $this->get($set, $lang, $code);
+
+        if (is_null($data) && $lang != $this->native) {
+            $data = $native;
+        }
 
         if (is_null($data)) {
             return '';
@@ -213,23 +222,26 @@ class UCT
         $desc = $data['desc'];
 
         if ($desc == '') {
-            $desc = $this->data($set, $this->native, $code);
-            if ($desc == '') {
-                $desc = $code;
-            }
+            $desc = $code;
         }
 
-        if ($data['quantity'] && is_array($args)) {
+        if ($native['quantity'] && is_array($args)) {
             $n = array();
-            foreach (preg_split('~^---$~m', $desc) as $d) {
-                $d = explode('|', $d, 2);
-                $n[trim($d[0])] = trim($d[1]);
+            foreach (preg_split('~^---\s*$~m', $desc) as $d) {
+                @list($k, $v) = explode('|', $d, 2);
+                if ($v != '') {
+                    $n[trim($k)] = trim($v);
+                } else {
+                    $n['*'] = trim($k . ' *');
+                }
             }
 
             if (isset($n[$args[0]])) {
                 $desc = $n[$args[0]];
             } elseif (isset($n['n'])) {
                 $desc = $n['n'];
+            } elseif (isset($n['*'])) {
+                $desc = $n['*'];
             } else {
                 throw new Exception('Missing entry "n" for '.$set.'::'.$code.'('.$lang.')');
             }

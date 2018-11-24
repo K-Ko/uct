@@ -3,13 +3,13 @@
 /**
  * Console script
  */
-require __DIR__.'/../vendor/autoload.php';
+require __DIR__.'/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
 
 // Load environment, if exists
-if (is_file(__DIR__ . '/../.env')) {
-    $dotenv = new Dotenv\Dotenv(__DIR__ . '/..');
+if (is_file(__DIR__ . '/.env')) {
+    $dotenv = new Dotenv\Dotenv(__DIR__);
     $dotenv->load();
 }
 

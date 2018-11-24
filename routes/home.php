@@ -83,7 +83,7 @@ $app->get(
 $app->post(
     '/',
     function (Request $request, Response $response, array $args) {
-    // Remove empty parameters
+        // Remove empty parameters
         $params = array_filter($request->getParsedBody(), function ($p) {
             return !!$p;
         });

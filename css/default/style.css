@@ -8,11 +8,12 @@ body {
 }
 
 a {
-    color: rgb(128,0,0);
+    color: rgb(128, 0, 0);
     text-decoration: none !important;
 }
 
-th.count, td.count {
+th.count,
+td.count {
     font-family: monospace;
     font-size: 120%;
     text-align: right;
@@ -20,7 +21,9 @@ th.count, td.count {
     border-top: solid white 1px;
 }
 
-textarea, input[type=text], input[type=number] {
+textarea,
+input[type='text'],
+input[type='number'] {
     font-family: monospace;
     font-size: 120% !important;
 }
@@ -38,7 +41,7 @@ table .form-inline {
 }
 
 .input-group.spinner input {
-    text-align: center
+    text-align: center;
 }
 
 .input-group.spinner .input-group-addon a {
@@ -51,13 +54,10 @@ table .form-inline {
 }
 
 .input-group.input-group-sm.spinner .input-group-addon a {
-    font-size: .8rem;
-    height: .6rem;
+    font-size: 0.8rem;
+    height: 0.6rem;
 }
 
-.g-translate {
-    font-size: smaller;
-}
 /* Extend Bootstrap */
 .btn {
     cursor: pointer;
