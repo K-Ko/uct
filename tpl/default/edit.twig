@@ -4,23 +4,22 @@
 
     {% include 'code-select.twig' %}
 
-    <hr>
-
-    <a name="edit"></a>
+    <hr id="edit">
 
     <div class="row">
-        <div class="col h3 text-center">
+        {% if code %}
+            <div class="col-12 col-md text-center text-md-left order-2 h3">
+                {{ code }}
+            </div>
+        {% endif %}
+        <div class="col-12 col-md h3 text-center order-1 order-md-2">
             {{ desc }}
-            {%- if code != '' -%}
-                <i class="fa fa-fw fa-ellipsis-v"></i>
-                {{- code -}}
-            {%- endif -%}
         </div>
-        <div class="col text-center mt-2">
-            {% if nav.count > 1 %}
+        {% if code %}
+            <div class="col-12 col-md text-center text-md-right order-3 mt-md-2">
                 ({{ t.NumberOfMany(nav.pos, nav.count) }})
-            {% endif %}
-        </div>
+            </div>
+        {% endif %}
     </div>
 
     <div class="row mb-3">
@@ -46,25 +45,25 @@
             <div class="row mb-3">
                 <div class="col btn-group" role="group">
                     <a
-                        href="{{ pathFor('edit', {'set': set, 'code': nav.first, 'lang': lang, 'lang2': lang2}) }}"
+                        href="{{ pathFor('edit', {'set': set, 'code': nav.first, 'lang': lang, 'lang2': lang2}) }}#edit"
                         class="btn btn-outline-secondary form-control">
                         <i class="fa fa-fw fa-fast-backward"></i>
                         {{ nav.first}}
                     </a>
                     {% if nav.count > 2 %}
                         <a
-                            href="{{ pathFor('edit', {'set': set, 'code': nav.prev, 'lang': lang, 'lang2': lang2}) }}"
+                            href="{{ pathFor('edit', {'set': set, 'code': nav.prev, 'lang': lang, 'lang2': lang2}) }}#edit"
                             class="btn btn-outline-secondary form-control">
                             <i class="fa fa-fw fa-step-backward"></i>
                             {{ nav.prev}}
                         </a>
-                        <a href="{{ link_next }}" class="btn btn-outline-secondary form-control">
+                        <a href="{{ link_next }}#edit" class="btn btn-outline-secondary form-control">
                             {{ nav.next}}
                             <i class="fa fa-fw fa-step-forward"></i>
                         </a>
                     {% endif %}
                     <a
-                        href="{{ pathFor('edit', {'set': set, 'code': nav.last, 'lang': lang, 'lang2': lang2}) }}"
+                        href="{{ pathFor('edit', {'set': set, 'code': nav.last, 'lang': lang, 'lang2': lang2}) }}#edit"
                         class="btn btn-outline-secondary form-control">
                         {{ nav.last}}
                         <i class="fa fa-fw fa-fast-forward"></i>
@@ -115,30 +114,47 @@
                 {{ macros.input_hidden('admin[slave]', admin.slave) }}
                 {{ macros.input_hidden('admin[multi]', admin.multi) }}
             {% else %}
-                {{ macros.input_row('radio', '', true, t.NormalSet) }}
-                {{ macros.input_row('radio', 'param', admin.param, t.ParameterSet, t.ParameterSetHint) }}
-                {{ macros.input_row('radio', 'slave', admin.slave, t.SlaveSet, t.SlaveSetHint) }}
-                {{ macros.input_row('checkbox', 'multi', admin.multi, t.MultilineSet, t.MultilineSetHint) }}
+                {{ macros.input_row_admin('radio', '', true, t.NormalSet) }}
+                {{ macros.input_row_admin('radio', 'param', admin.param, t.ParameterSet, t.ParameterSetHint) }}
+                {{ macros.input_row_admin('radio', 'slave', admin.slave, t.SlaveSet, t.SlaveSetHint) }}
+                {{ macros.input_row_admin('checkbox', 'multi', admin.multi, t.MultilineSet, t.MultilineSetHint) }}
             {% endif %}
         {% else %}
             {% if logged_in %}
-                {{ macros.input_row('checkbox', 'active', not active, t.Deprecated, t.DeprecatedHint) }}
+                {{ macros.input_row_admin('checkbox', 'active', not active, t.Deprecated, t.DeprecatedHint) }}
                 {% if multi %}
-                    {{ macros.input_row_plain('checkbox', 'quantity', quantity, t.WithQuantity, t.WithQuantityHint) }}
+                    <div class="form-group row">
+                        <div class="col-md-3">{{ t.WithQuantity }}</div>
+                        <div class="col">
+                            <div class="custom-control custom-checkbox">
+                                <input
+                                    id="checkbox-quantity"
+                                    class="custom-control-input"
+                                    type="checkbox"
+                                    name="quantity"
+                                    {{ quantity ? 'checked' }}>
+                                <label for="checkbox-quantity" class="custom-control-label text-muted">
+                                    {{ t.WithQuantityHint }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 {% endif %}
             {% else %}
                 {{ macros.input_hidden('active', active ? 1) }}
-                {% if not active %}
-                    <div class="form-group row">
-                        <div class="col-md-3"></div>
-                        <div class="col form-text">{{ t.DeprecatedHint }}</div>
-                    </div>
-                {% endif %}
                 {{ macros.input_hidden('quantity', quantity ? 0) }}
-                {% if quantity %}
+                {% if not active or quantity %}
                     <div class="form-group row">
                         <div class="col-md-3"></div>
-                        <div class="col form-text">{{ t.WithQuantityHint }}</div>
+                        <div class="col form-text text-italic">
+                            {% if not active %}
+                                {{ t.DeprecatedHint }}
+                                <br>
+                            {% endif %}
+                            {% if quantity %}
+                                {{ t.WithQuantityHint }}
+                            {% endif %}
+                        </div>
                     </div>
                 {% endif %}
             {% endif %}
@@ -151,11 +167,13 @@
                 <label class="col-md-3 col-form-label" for="input-order">{{ t.CodeOrder }}</label>
                 <div class="col">
                     <div class="input-group input-group-sm spinner" data-trigger="spinner">
-                        <span class="input-group-addon">
-                            <a href="javascript:;" data-spin="down">
-                                <i class="fa fa-minus"></i>
-                            </a>
-                        </span>
+                        <div class="input-group-prepend">
+                            <div class="input-group-text px-0">
+                                <button class="btn btn-link btn-sm text-body" data-spin="down">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
                         <input
                             id="input-order"
                             class="form-control"
@@ -164,11 +182,13 @@
                             name="order"
                             value="{{ order }}"
                             pattern="-?[0-9]*">
-                        <span class="input-group-addon">
-                            <a href="javascript:;" data-spin="up">
-                                <i class="fa fa-plus"></i>
-                            </a>
-                        </span>
+                        <div class="input-group-append">
+                            <span class="input-group-text px-0">
+                                <button class="btn btn-link btn-sm text-body" data-spin="up">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
