@@ -1,7 +1,15 @@
 $(function() {
-    setTimeout(function() {
-        $('#flash').fadeOut('slow');
-    }, $('#flash').hasClass('alert-success') ? 3000 : 15000);
+    let flash = $('#flash');
+
+    if (flash.length) {
+        setTimeout(
+            function() {
+                flash.fadeToggle('slow');
+            },
+            // Detect success or error
+            flash.find('.alert-success').length ? 5000 : 15000
+        );
+    }
 
     $('[data-toggle="tooltip"]').tooltip();
 
