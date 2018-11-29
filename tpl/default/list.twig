@@ -1,6 +1,22 @@
+{% macro add_code_th(can_add, set) %}
+    <th colspan="3" class="w-1 pl-1">
+        {% if can_add %}
+            <a
+                href="{{ pathFor('edit', {'set': set}) }}"
+                class="btn btn-sm btn-block btn-light"
+                data-toggle="tooltip"
+                title="{{ t.AddCode }}">
+                <i class="fa fa-plus"></i>
+            </a>
+        {% endif %}
+    </th>
+{% endmacro add_code_th %}
+
 {% extends 'index.twig' %}
 
 {% block content %}
+
+    {% import _self as macros %}
 
     {% include 'code-select.twig' %}
 
@@ -42,17 +58,19 @@
                             <th>{{ t.Description }}</th>
                         {% endif %}
 
-                        <th colspan="3" class="w-1 px-1">
+                        {{ macros.add_code_th(can_add, set) }}
+
+                        {# <th colspan="3" class="w-1 pl-1">
                             {% if can_add %}
                                 <a
                                     href="{{ pathFor('edit', {'set': set}) }}"
-                                    class="btn btn-sm btn-secondary"
+                                    class="btn btn-sm btn-block btn-light"
                                     data-toggle="tooltip"
                                     title="{{ t.AddCode }}">
                                     <i class="fa fa-fw fa-plus"></i>
                                 </a>
                             {% endif %}
-                        </th>
+                        </th> #}
                     </tr>
                 </thead>
                 <tbody>
@@ -110,7 +128,7 @@
                                     </form>
                                 {% endif %}
                             </td>
-                            <td class="px-1">
+                            <td class="pl-1">
                                 {% if not(row.code starts with 'code_')and can_delete %}
                                     <form class="form-inline" action="{{ pathFor('POST delete') }}" method="post">
                                         <input type="hidden" name="set" value="{{ set }}">
@@ -148,29 +166,30 @@
                     {% set colspan = colspan + 1 %}
                 {% endif %}
 
-                <tfoot>
+                <tfoot class="thead-dark">
                     <tr>
-                        <th colspan="{{ colspan }}">
-                            <h4>{{ t.Records(rec_count) }}</h4>
+                        <th colspan="{{ colspan }}" class="h4">
+                            {{ t.Records(rec_count) }}
                         </th>
-                        <th class="px-1">
+
+                        {{ macros.add_code_th(can_add, set) }}
+
+                        {# <th colspan="3" class="pl-1">
                             {% if can_add %}
                                 <a
                                     href="{{ pathFor('edit', {'set': set}) }}"
-                                    class="btn btn-sm btn-secondary"
+                                    class="btn btn-sm btn-block btn-light"
                                     data-toggle="tooltip"
                                     title="{{ t.AddCode }}">
                                     <i class="fa fa-fw fa-plus"></i>
                                 </a>
                             {% endif %}
-                        </th>
+                        </th> #}
                     </tr>
                 </tfoot>
             </table>
 
         </div>
     </div>
-
-    {% include 'footer.twig' %}
 
 {% endblock %}

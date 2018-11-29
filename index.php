@@ -217,11 +217,11 @@ $app->add(new Middleware($container));
  */
 $app->run();
 
-if (getenv('ENVIRONMENT') == 'development') {
+if (getenv('DEBUG') == 'development') {
     $dumper = new Twig_Profiler_Dumper_Text();
-    echo '<div class="container"><hr><pre>';
-    echo $dumper->dump($container['profiler']);
     echo '<!-- ';
+    echo '----------------------------------------------------------------------', PHP_EOL;
+    echo $dumper->dump($container['profiler']);
     echo '----------------------------------------------------------------------', PHP_EOL;
     print_r($container['db']->queries);
     echo '-->';

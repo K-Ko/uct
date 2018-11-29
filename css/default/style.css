@@ -74,3 +74,21 @@ table .form-inline {
 .text-italic {
     font-style: italic;
 }
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+}
+body {
+    margin-bottom: 5rem; /* Margin bottom by footer height */
+}
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 3rem; /* Set the fixed height of the footer here */
+    padding-top: 0.75rem;
+}
+/* ---------------------------------------------- */

@@ -10,16 +10,22 @@
 
     ./uct app:init
 
+This will ask for your database credentials and admin password to store into `.env`.
+
 ### Bootstrap database
 
-    ./uct sql:bootstrap
+    ./uct sql:bootstrap <primary language>
 
-### Seed database with some add. codes
+Define, which language your primary or native language is.
 
-Check for available SQLs with
+It can be one of `en`, `de` or `fr` at the moment.
+
+### Seed database with additional codes
+
+Check for available SQLs with:
 
     ./uct sql:list
 
-Load with
+and load with:
 
     ./uct sql:load <file name>
