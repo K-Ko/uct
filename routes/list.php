@@ -17,9 +17,6 @@ $app->get(
         if ($data['lang'] != $this['editor']->native && $data['lang2'] == '') {
             $data['lang']  = $this['editor']->native;
             $data['lang2'] = $data['lang'];
-        } else {
-            $data['lang']  = $data['lang'];
-            $data['lang2'] = $data['lang2'];
         }
 
         $data['admin'] = $this['editor']->adminGet($data['set']);

@@ -1,5 +1,5 @@
 {% macro input_hidden(name, value) %}
-    <input type="hidden" name="{{ name }}" value="{{ value }}">
+    <input type="hidden" name="{{ name }}" value="{{ value|e }}">
 {% endmacro input_hidden %}
 
 {% macro input_row_admin(type, name, checked, label, hint) %}
@@ -12,7 +12,7 @@
                     class="custom-control-input"
                     type="{{ type }}"
                     name="admin[]"
-                    value="{{ name }}"
+                    value="{{ name|e }}"
                     {{ checked ? 'checked' }}>
                 <label
                     for="admin-{{ type }}-{{ name }}"
@@ -27,10 +27,10 @@
 {% macro adminflags(admin) %}
     {% spaceless %}
         {% if admin.param %}
-            <span data-toggle="tooltip" title="{{ t.ParameterSet }}">P</span>{% endif %}
+            <span data-toggle="tooltip" title="{{ t.ParameterSet|e }}">P</span>{% endif %}
         {% if admin.slave %}
-            <span data-toggle="tooltip" title="{{ t.SlaveSet }}">S</span>{% endif %}
+            <span data-toggle="tooltip" title="{{ t.SlaveSet|e }}">S</span>{% endif %}
         {% if admin.multi %}
-            <span data-toggle="tooltip" title="{{ t.MultilineSet }}">M</span>{% endif %}
+            <span data-toggle="tooltip" title="{{ t.MultilineSet|e }}">M</span>{% endif %}
     {% endspaceless %}
 {% endmacro adminflags %}

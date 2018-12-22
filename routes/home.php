@@ -19,10 +19,6 @@ $app->get(
         $totals = [];
         $todo_count = $todo_rows = 0;
 
-        foreach ($lang_rows as $row) {
-            $totals[$row['code']] = 0;
-        }
-
         foreach ($set_rows as $id => &$row) {
             $admin = $this['editor']->adminGet($row['code']);
 
@@ -57,9 +53,10 @@ $app->get(
                 ];
 
                 if (!isset($totals[$lang_row['code']])) {
-                    $totals[$lang_row['code']] = 0;
+                    $totals[$lang_row['code']] = 1;
+                } else {
+                    $totals[$lang_row['code']] += $code_count;
                 }
-                $totals[$lang_row['code']] += $code_count;
             }
         }
 

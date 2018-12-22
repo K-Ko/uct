@@ -1,6 +1,7 @@
 .env
 
 cache/*
+custom/*
 tpl/custom/*
 sql/code_lang*
 

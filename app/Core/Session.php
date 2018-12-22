@@ -205,6 +205,18 @@ class Session
     }
 
     /**
+     * Get $_SESSION value and remove
+     *
+     * @return mixed value or null if not set
+     */
+    public static function take($key, $default = null)
+    {
+        $value = self::get($key, $default);
+        self::delete($key);
+        return $value;
+    }
+
+    /**
      * Set $_SESSION value
      */
     public static function set($key, $value)

@@ -12,6 +12,7 @@ use Slim\Views\Twig;
 use Slim\Views\TwigExtension;
 use UCT\Editor;
 use UCT\Middleware;
+use UCT\UCT;
 
 /**
  *
@@ -73,16 +74,17 @@ $container['cacheDir'] = function ($c) {
 };
 
 // Register provider
-$container['config'] = function ($c) {
+$container['config'] = function ($c) use ($dotenv) {
     // Build configuration
-    $env = array_merge(
-        [
-            'CODESETS' => [],
-            'LAYOUT'   => 'default',
-            'LOGIN'    => null,
-        ],
-        $_ENV
-    );
+    $env = [
+        'CODESETS' => [],
+        'LAYOUT'   => 'default',
+        'LOGIN'    => null,
+    ];
+
+    foreach ($dotenv->getEnvironmentVariableNames() as $key) {
+        $env[$key] = getenv($key);
+    }
 
     if (Session::loggedIn()) {
         $env['CODESETS'] = [];
@@ -98,7 +100,10 @@ $container['config'] = function ($c) {
 
 $container['db'] = function ($c) {
     $db = @new MySQLi(
-        $c['config']['DBHOST'], $c['config']['DBUSER'], $c['config']['DBPASS'], $c['config']['DBNAME']
+        $c['config']['DBHOST'],
+        $c['config']['DBUSER'],
+        $c['config']['DBPASS'],
+        $c['config']['DBNAME']
     );
 
     if ($db->connect_error) {
@@ -145,7 +150,7 @@ $container['view'] = function ($c) {
         $settings['strict_variables'] = true;
         $c['profiler'] = function ($c) {
             return new Twig_Profiler_Profile();
-       };
+        };
     }
 
     $twig = new Twig($c['baseDir'].'/tpl/default', $settings);
@@ -212,11 +217,16 @@ foreach (glob($container['baseDir'].'/routes/*.php') as $file) {
 
 $app->add(new Middleware($container));
 
+$container->view['LAYOUT'] = $container['config']['LAYOUT'];
+
 /**
  * Go
  */
 $app->run();
 
+/**
+ *
+ */
 if (getenv('DEBUG') == 'development') {
     $dumper = new Twig_Profiler_Dumper_Text();
     echo '<!-- ';

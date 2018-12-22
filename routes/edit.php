@@ -52,31 +52,33 @@ $app->get(
 
         $data['code_admin'] = $this['editor']->adminGet($data['set']);
 
+        $language = Session::get('language');
+
         if ($data['code_admin']['param']) {
             // Parameter set, only native language
             $data['lang_rows'] = [
                 [
                     'code'   => $native,
-                    'desc'   => $this['editor']->desc('code_lang', Session::get('language'), $native),
+                    'desc'   => $this['editor']->desc('code_lang', $language, $native),
                     'order'  => 0,
                     'active' => 1
                 ]
             ];
         } elseif ($data['lang2'] == '') {
             // All languages
-            $data['lang_rows'] = $this['editor']->languageSet('code_lang', Session::get('language'));
+            $data['lang_rows'] = $this['editor']->languageSet('code_lang', $language);
         } else {
             // 2 languages only
             $data['lang_rows'] = [
                 [
                     'code'   => $data['lang'],
-                    'desc'   => $this['editor']->desc('code_lang', Session::get('language'), $data['lang']),
+                    'desc'   => $this['editor']->desc('code_lang', $language, $data['lang']),
                     'order'  => 0,
                     'active' => 1
                 ],
                 [
                     'code'  => $data['lang2'],
-                    'desc'  => $this['editor']->desc('code_lang', Session::get('language'), $data['lang2']),
+                    'desc'  => $this['editor']->desc('code_lang', $language, $data['lang2']),
                     'order' => 0,
                     'active' => 1
                 ]
@@ -111,6 +113,9 @@ $app->get(
             }
         }
 
+        $data['code_set_hint'] = $this['i18n']->md(
+            $this['editor']->getHint('code_set', $data['set'], $language)
+        );
         $data['desc'] = $this['editor']->desc('code_set', null, $data['set']);
 
         return $this->view->render($response, 'edit.twig', $data);
@@ -142,7 +147,37 @@ $app->post(
         // Make checkbox value to integer
         $params['quantity'] = +!!isset($params['quantity']);
 
-        if (!preg_match('~^[a-zA-Z0-9_]+$~', $params['code'])) {
+        $code = trim($params['code']);
+
+        $code_set = $this['editor']->get('code_set', $this['editor']->native, $params['set']);
+
+        // Check needed transformation only for new codes (code_old == '')
+        // and not system codes (order <= 0)
+        if (($params['code_old'] == '' || $params['cloned']) &&
+            array_key_exists('order', $code_set) && $code_set['order'] > 0 &&
+            ($transform = $this['editor']->param('code_editor_cfg', 'auto_key_transform'))) {
+            // Transform & clear only if transformation is defined
+            switch ($transform) {
+                case 'camelcase':
+                    $code = preg_replace('~[^a-zA-Z0-9]+~', ' ', $code);
+                    $code = ucwords(strtolower($code));
+                    $code = str_replace(' ', '', $code);
+                    break;
+                case 'lowercase':
+                    $code = preg_replace('~[^a-zA-Z0-9_]+~', '_', $code);
+                    $code = strtolower($code);
+                    break;
+                case 'uppercase':
+                    $code = preg_replace('~[^a-zA-Z0-9_]+~', '_', $code);
+                    $code = strtoupper($code);
+                    break;
+            }
+        }
+
+        $code = preg_replace('~_+~', '_', $code);
+        $code = trim($code, '_');
+
+        if (!preg_match('~^[a-zA-Z0-9_]+$~', $code)) {
             Session::flash('CodeRegexFailed|danger');
             return $response->withRedirect(
                 $this->router->pathFor('list', ['set' => $params['set']]),
@@ -173,20 +208,24 @@ $app->post(
                     $admin[$value] = 1;
                 }
             }
-            $this['editor']->adminPut($params['code'], $admin);
+            $this['editor']->adminPut($code, $admin);
         }
 
-        if ($params['code'] != '') {
+        if ($params['code_old'] != '') {
+            $this['editor']->remove($params['set'], $params['code_old']);
+        }
+
+        if ($code != '') {
             if (empty($params['desc'])) {
                 // Add new key
-                $params['desc'] = [ $this['editor']->native => $params['code'] ];
+                $params['desc'] = [ $this['editor']->native => $code ];
             }
 
             foreach ($params['desc'] as $lang => $desc) {
                 $this['editor']->putData(
                     $params['set'],
                     $lang,
-                    $params['code'],
+                    $code,
                     $desc,
                     $params['quantity'],
                     $params['order'],
@@ -195,21 +234,31 @@ $app->post(
             }
 
             if (array_key_exists('hint', $params)) {
-                $this['editor']->setHint($params['set'], $params['code'], $params['hint']);
+                $this['editor']->setHint($params['set'], $code, $params['hint']);
             }
 
             Session::flash('CodeSaved');
         }
 
-        if (!empty($params['next'])) {
-            // Edit next code
-            return $response->withRedirect($params['next'].'#edit', null, 200);
-        } else {
-            // Add next code
-            return $response->withRedirect(
-                $this->router->pathFor('edit', ['set' => $params['set']]),
-                200
-            );
+        if (array_key_exists('go-next', $params)) {
+        // Decide where to go next
+            if (!empty($params['next'])) {
+                // Edit next code
+                return $response->withRedirect($params['next'] . '#edit');
+            } else {
+                // Add next code, no languages here!
+                return $response->withRedirect(
+                    $this->router->pathFor('edit', ['set' => $params['set']]) . '#edit'
+                );
+            }
         }
+
+        // Retrun to list view by default
+        return $response->withRedirect(
+            $this->router->pathFor(
+                'list',
+                [ 'set' => $params['set'], 'lang' => $params['lang'], 'lang2' => $params['lang2'] ]
+            )
+        );
     }
 )->setName('POST edit');

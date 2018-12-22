@@ -32,9 +32,7 @@
                                 </span>
                             </th>
                         {% endfor %}
-                        {% if set_rows | length and can_delete %}
-                            <th></th>
-                        {% endif %}
+                        {{ set_rows | length and can_delete ? '<th></th>' }}
                     </tr>
                 </thead>
 
@@ -85,9 +83,7 @@
                             {% for total in totals %}
                                 <th class="count">{{ total }}</th>
                             {% endfor %}
-                            {% if can_delete %}
-                                <th></th>
-                            {% endif %}
+                            {{ can_delete ? '<th></th>' }}
                         </tr>
                     </tfoot>
                 {% endif %}

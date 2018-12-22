@@ -1,19 +1,31 @@
--- Editor configuration -----------------------------------------------------
+-- Application settings --------------------------------------------------------
+REPLACE INTO `{{TABLE}}` (`set`, `lang`, `code`, `desc`) VALUES
+('code_admin', '{{NATIVE}}', 'code_editor_cfg', '{"param":1}');
+
 REPLACE INTO `{{TABLE}}` (`set`, `lang`, `code`, `desc`, `order`) VALUES
-('code_set', 'de', 'code_editor_cfg', 'Editor-Einstellungen', -11),
-('code_set', 'en', 'code_editor_cfg', 'Editor settings', -11),
-('code_set', 'fr', 'code_editor_cfg', 'Paramètres de l\'éditeur', -11);
+('code_set', 'de', 'code_editor_cfg', 'Anwendungs-Einstellungen', -12),
+('code_set', 'en', 'code_editor_cfg', 'Application settings', -12),
+('code_set', 'fr', 'code_editor_cfg', 'Paramètres des applications', -12);
 
--- Editor configuration -----------------------------------------------------
 REPLACE INTO `{{TABLE}}` (`set`, `lang`, `code`, `desc`, `hint`) VALUES
-('code_editor_cfg', 'de', 'Description', 'Universal Code Übersetzer', 'Kopfzeile'),
-('code_editor_cfg', 'de', 'Title', 'Universal Code Übersetzer', 'Wird für Browser-Tab und Frontend verwendet'),
+('code_editor_cfg', '{{NATIVE}}', 'logo', '/icons/favicon-32x32.png', 0, 0, 1, 'URL, scaled to 32x32 px'),
+('code_editor_cfg', '{{NATIVE}}', 'auto_key_transform', '', 0, 0, 1, 'Possible values if you wish: <span class="text-monospace">(camelcase|lowercase|uppercase)</span>');
 
-('code_editor_cfg', 'en', 'Description', 'Universal Code Translater', 'Header line'),
-('code_editor_cfg', 'en', 'Title', 'Universal Code Translater', 'Used for browser tab and frontend'),
+-- Application texts --------------------------------------------------------
+REPLACE INTO `{{TABLE}}` (`set`, `lang`, `code`, `desc`, `order`) VALUES
+('code_set', 'de', 'code_editor_txt', 'Anwendungs-Texte', -11),
+('code_set', 'en', 'code_editor_txt', 'Application texts', -11),
+('code_set', 'fr', 'code_editor_txt', 'Textes d\'application', -11);
 
-('code_editor_cfg', 'fr', 'Description', 'Traducteur de code universel', 'Ligne d\'en-tête'),
-('code_editor_cfg', 'fr', 'Title', 'Traducteur de code universel', 'Utilisé pour l\'onglet et le frontal du navigateur');
+REPLACE INTO `{{TABLE}}` (`set`, `lang`, `code`, `desc`, `hint`) VALUES
+('code_editor_txt', 'de', 'Description', 'Universal Code Übersetzer', 'Kopfzeile'),
+('code_editor_txt', 'de', 'Title', 'Universal Code Übersetzer', 'Wird für Seitentitel und Navigation verwendet'),
+
+('code_editor_txt', 'en', 'Description', 'Universal Code Translater', 'Header line'),
+('code_editor_txt', 'en', 'Title', 'Universal Code Translater', 'Used for page title and navigation'),
+
+('code_editor_txt', 'fr', 'Description', 'Traducteur de code universel', 'Ligne d\'en-tête'),
+('code_editor_txt', 'fr', 'Title', 'Traducteur de code universel', 'Utilisé pour le titre de la page et la navigation');
 
 -- Editor texts -------------------------------------------------------------
 REPLACE INTO `{{TABLE}}` (`set`, `lang`, `code`, `desc`) VALUES
@@ -39,6 +51,7 @@ REPLACE INTO `{{TABLE}}` (`set`, `lang`, `code`, `desc`, `quantity`) VALUES
 ('code_editor', 'en', 'CodeRegexFailed', 'Code must match the pattern `[a-zA-Z0-9_]+`', 0),
 ('code_editor', 'en', 'CodeSaved', 'Code saved', 0),
 ('code_editor', 'en', 'CodeStateToggled', 'Code state toggled', 0),
+('code_editor', 'en', 'CopyCode', 'Copy code', 0),
 ('code_editor', 'en', 'CreateSlaveSet', 'Create slave set', 0),
 ('code_editor', 'en', 'Delete', 'Delete', 0),
 ('code_editor', 'en', 'Deprecated', 'Deprecated', 0),
@@ -66,7 +79,10 @@ REPLACE INTO `{{TABLE}}` (`set`, `lang`, `code`, `desc`, `quantity`) VALUES
 ('code_editor', 'en', 'RecordAdded', 'Record added', 0),
 ('code_editor', 'en', 'Records', '0 | No records\n---\n1 | 1 record\n---\nn | %d records', 1),
 ('code_editor', 'en', 'RecordUpdated', 'Record updated', 0),
+('code_editor', 'en', 'RegexPossible', 'Regular expressions are possible', 0),
+('code_editor', 'en', 'RenameCode', 'Rename code\nATTENTION: Check use!', 0),
 ('code_editor', 'en', 'Save', 'Save', 0),
+('code_editor', 'en', 'SaveAndNext', 'Save and next', 0),
 ('code_editor', 'en', 'SelectSetLanguage', 'Select a code set and up to 2 languages', 0),
 ('code_editor', 'en', 'Skip', 'Skip', 0),
 ('code_editor', 'en', 'SlaveSet', 'Slave set', 0),
@@ -94,6 +110,7 @@ REPLACE INTO `{{TABLE}}` (`set`, `lang`, `code`, `desc`, `quantity`) VALUES
 ('code_editor', 'de', 'CodeRegexFailed', 'Code muss folgendem Muster entsprechen: `[a-zA-Z0-9_]+`', 0),
 ('code_editor', 'de', 'CodeSaved', 'Code gesichert', 0),
 ('code_editor', 'de', 'CodeStateToggled', 'Code Status umgeschaltet', 0),
+('code_editor', 'de', 'CopyCode', 'Code kopieren', 0),
 ('code_editor', 'de', 'CreateSlaveSet', 'Slave-Set anlegen', 0),
 ('code_editor', 'de', 'Delete', 'Löschen', 0),
 ('code_editor', 'de', 'Deprecated', 'Veraltet', 0),
@@ -121,7 +138,10 @@ REPLACE INTO `{{TABLE}}` (`set`, `lang`, `code`, `desc`, `quantity`) VALUES
 ('code_editor', 'de', 'RecordAdded', 'Datensatz hinzugefügt', 0),
 ('code_editor', 'de', 'Records', '0 | Keine Einträge\n---\n1 | 1 Eintrag\n---\nn | %d Einträge', 1),
 ('code_editor', 'de', 'RecordUpdated', 'Datensatz geändert', 0),
+('code_editor', 'de', 'RegexPossible', 'Reguläre Ausdrücke sind möglich', 0),
+('code_editor', 'de', 'RenameCode', 'Code umbenennen\nACHTUNG: Verwendung prüfen!', 0),
 ('code_editor', 'de', 'Save', 'Sichern', 0),
+('code_editor', 'de', 'SaveAndNext', 'Sichern & Weiter', 0),
 ('code_editor', 'de', 'SelectSetLanguage', 'Wähle ein Code Set und bis zu 2 Sprachen aus', 0),
 ('code_editor', 'de', 'Skip', 'Überspringen', 0),
 ('code_editor', 'de', 'SlaveSet', 'Slave-Set', 0),
@@ -149,6 +169,7 @@ REPLACE INTO `{{TABLE}}` (`set`, `lang`, `code`, `desc`, `quantity`) VALUES
 ('code_editor', 'fr', 'CodeRegexFailed', 'Le code doit correspondre au modèle `[a-zA-Z0-9_]+`', 0),
 ('code_editor', 'fr', 'CodeSaved', 'Code enregistré', 0),
 ('code_editor', 'fr', 'CodeStateToggled', 'État du code basculé', 0),
+('code_editor', 'fr', 'CopyCode', 'Code de copie', 0);
 ('code_editor', 'fr', 'CreateSlaveSet', 'Créer un ensemble d\'esclaves', 0),
 ('code_editor', 'fr', 'Delete', 'Effacer', 0),
 ('code_editor', 'fr', 'Deprecated', 'Déprécié', 0),
@@ -176,7 +197,10 @@ REPLACE INTO `{{TABLE}}` (`set`, `lang`, `code`, `desc`, `quantity`) VALUES
 ('code_editor', 'fr', 'RecordAdded', 'Enregistrement ajouté', 0),
 ('code_editor', 'fr', 'Records', '0 | Aucun enregistrement\n---\n1 | 1 enregistrement\n---\nn | %d enregistrements', 1),
 ('code_editor', 'fr', 'RecordUpdated', 'Données mises à jour', 0),
+('code_editor', 'fr', 'RegexPossible', 'Les expressions régulières sont possibles', 0);
+('code_editor', 'fr', 'RenameCode', 'Renommer le code\nATTENTION : Vérifier l\'utilisation !', 0);
 ('code_editor', 'fr', 'Save', 'Enregistrer', 0),
+('code_editor', 'fr', 'SaveAndNext', 'Sauvegarder et suivant', 0);
 ('code_editor', 'fr', 'SelectSetLanguage', 'Sélectionnez un jeu de codes et jusqu\'à 2 langues', 0),
 ('code_editor', 'fr', 'Skip', 'Sauter', 0),
 ('code_editor', 'fr', 'SlaveSet', 'Esclave', 0),

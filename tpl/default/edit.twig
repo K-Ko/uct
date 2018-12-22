@@ -24,7 +24,10 @@
 
     <div class="row mb-3">
         <div class="col text-muted text-center">
-            {% if code_admin.param %}
+            {# Supress other hints if there is a specific code set hint #}
+            {% if code_set_hint %}
+                <h5>{{ code_set_hint }}</h5>
+            {% elseif code_admin.param %}
                 {{ t.ParameterSetHint }}
             {% elseif code_admin.slave %}
                 {{ t.SlaveSetHint }}
@@ -57,8 +60,8 @@
                             <i class="fa fa-fw fa-step-backward"></i>
                             {{ nav.prev}}
                         </a>
-                        <a href="{{ link_next }}#edit" class="btn btn-outline-secondary form-control">
-                            {{ nav.next}}
+                        <a class="btn btn-outline-secondary form-control" href="{{ link_next }}#edit">
+                            {{ nav.next }}
                             <i class="fa fa-fw fa-step-forward"></i>
                         </a>
                     {% endif %}
@@ -77,33 +80,43 @@
 
     <form action="{{ pathFor('POST edit') }}" method="post">
 
+        {{ macros.input_hidden('lang', lang) }}
+        {{ macros.input_hidden('lang2', lang2) }}
         {{ macros.input_hidden('set', set) }}
+        {{ macros.input_hidden('code_old', code) }}
+        {{ macros.input_hidden('cloned', cloned) }}
         {{ macros.input_hidden('next', link_next ?? '') }}
 
         <div class="row form-group">
             <div class="col-md-3">
-                <label class="text-bold col-form-label" for="input-code">{{ t.Code }}</label>
+                <label class="text-bold col-form-label float-left" for="input-code">{{ t.Code }}</label>
             </div>
             <div class="col">
+                {% set max = (set == 'code_set') ? 16 : 50 %}
+                {% if can_rename and code and not cloned %}
+                    <button
+                        id="btn-rename"
+                        class="btn btn-link text-danger"
+                        style="position:absolute; right:0; top:.25rem"
+                        data-toggle="tooltip"
+                        title="{{ t.h('RenameCode') }}">
+                        <i class="fa fa-fw fa-pencil"></i>
+                    </button>
+                {% endif %}
+                <input
+                    id="input-code"
+                    type="text"
+                    class="{{ code and not cloned ? 'form-control-plaintext font-weight-bold' : 'form-control' }}"
+                    name="code"
+                    maxlength="{{ max }}"
+                    value="{{ code }}"
+                    required="required"
+                    {{ code and not cloned ? 'readonly="readonly"' }}>
                 {% if code == '' %}
-                    {% set max = (set == 'code_set') ? 16 : 50 %}
-                    <input
-                        id="input-code"
-                        class="form-control"
-                        type="text"
-                        name="code"
-                        maxlength="{{ max }}"
-                        required="required"
-                        style="max-width: {{ max }}rem">
-                    <span class="text-muted">{{ t.CodeMaxChars(max) }}</span>
-                {% else %}
-                    {{ macros.input_hidden('code', code) }}
-                    <p class="form-control-plaintext text-bold">
-                        {{ code }}
-                    </p>
-                    {% if not logged_in %}
-                        {{ hint }}
-                    {% endif %}
+                    <small class="form-text">{{ t.CodeMaxChars(max) }}</small>
+                {% endif %}
+                {% if not logged_in %}
+                    <p>{{ hint }}</p>
                 {% endif %}
             </div>
         </div>
@@ -121,7 +134,10 @@
             {% endif %}
         {% else %}
             {% if logged_in %}
-                {{ macros.input_row_admin('checkbox', 'active', not active, t.Deprecated, t.DeprecatedHint) }}
+                {% if not code_admin.param %}
+                    {# Parameters are always active #}
+                    {{ macros.input_row_admin('checkbox', 'active', not active, t.Deprecated, t.DeprecatedHint) }}
+                {% endif %}
                 {% if multi %}
                     <div class="form-group row">
                         <div class="col-md-3">{{ t.WithQuantity }}</div>
@@ -200,7 +216,12 @@
                     {{ t.Hint }}
                 </label>
                 <div class="col">
-                    <input class="form-control" type="text" name="hint" value="{{ hint }}">
+                    {% if code_admin.param %}
+                        {{ macros.input_hidden('hint', hint) }}
+                        {{ hint }}
+                    {% else %}
+                        <input class="form-control" type="text" name="hint" value="{{ hint }}">
+                    {% endif %}
                 </div>
             </div>
         {% endif %}
@@ -231,12 +252,11 @@
 
                             {% if code != '' and row.translate %}
                                 <small class="form-text">
-                                    <a class="" href="{{ row.translate.0 }}" target="_gt">
+                                    <a class="mr-3" href="{{ row.translate.0 }}" target="_gt">
                                         <i class="fa fa-fw fa-google"></i>
                                         Google Translate
                                     </a>
-                                    |
-                                    <a class="" href="{{ row.translate.1 }}" target="_dt">
+                                    <a href="{{ row.translate.1 }}" target="_dt">
                                         <i class="fa fa-fw fa-globe"></i>
                                         DeepL translator
                                     </a>
@@ -249,19 +269,27 @@
         {% endfor %}
 
         <div class="row form-group">
-            <div class="col-md-3"></div>
-            <div class="col-12 col-sm mb-2 mb-sm-0">
+            <div class="col-lg-3"></div>
+            <div class="col-12 col-lg mb-2 mb-lg-0">
                 <button type="submit" class="btn btn-block btn-primary">
                     <i class="fa fa-fw fa-floppy-o"></i>
                     {{ t.Save }}
                 </button>
             </div>
+            {% if code == '' or nav.count > 2 %}
+                <div class="col-12 col-lg mb-2 mb-lg-0">
+                    <button type="submit" name="go-next" class="btn btn-block btn-primary">
+                        <i class="fa fa-fw fa-floppy-o"></i>
+                        {{ t.SaveAndNext }}
+                    </button>
+                </div>
+            {% endif %}
 
         </form>
 
         {% if nav.count > 2 %}
-            <div class="col-12 col-sm mb-2 mb-sm-0">
-                <a class="btn btn-block btn-secondary" href="{{ link_next }}">
+            <div class="col-12 col-lg mb-2 mb-lg-0">
+                <a class="btn btn-block btn-secondary" href="{{ link_next }}#edit">
                     {{ t.Skip }}
                     <i class="fa fa-fw fa-step-forward"></i>
                 </a>
@@ -269,7 +297,7 @@
         {% endif %}
 
         {% if code != '' and can_delete %}
-            <div class="col-12 col-sm">
+            <div class="col-12 col-lg">
                 <form action="{{ pathFor('POST delete') }}" method="post">
                     {{ macros.input_hidden('set', set) }}
                     {{ macros.input_hidden('code', code) }}

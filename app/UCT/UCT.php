@@ -39,6 +39,7 @@
 # $str = $bk->param( $set, $code)
 #
 ### HTML select common options:
+#
 #  'var_name'      => 'start_day'
 #  'value'         => $start_day
 #  'default'       => 1
@@ -93,12 +94,12 @@ CREATE TABLE `bk_code` (
 -- Native language: english
 INSERT INTO `bk_code`
 (`set`, `lang`, `code`, `desc`) VALUES
-('code_admin', 'en', 'code_admin', 'param=1 slave=1');
+('code_admin', 'en', 'code_admin', '{"param":1, "slave":1}');
 
 -- Native language: german
 INSERT INTO `bk_code`
 (`set`, `lang`, `code`, `desc`) VALUES
-('code_admin', 'de', 'code_admin', 'param=1 slave=1');
+('code_admin', 'de', 'code_admin', '{"param":1, "slave":1}');
 
 -- Translation en, de
 INSERT INTO `bk_code`
@@ -360,7 +361,8 @@ class UCT
 
             $row['desc'] = htmlspecialchars($row['desc']);
 
-            if (preg_match('~^::(.*?)::$~', $row['desc'], $args)) {
+            // ::optgoup label::
+            if (preg_match('~^::+(.*?)::+$~', $row['desc'], $args)) {
                 if ($optgroup) {
                     $options[] = '</optgroup>';
                 }
@@ -709,16 +711,19 @@ class UCT
      */
     public function remove($set, $code)
     {
-        $this->query($this->queries['remove'][0], $set, $code);
+        $rc = +$this->query($this->queries['remove'][0], $set, $code);
 
         // Delete whole set?
         if ($set == 'code_set') {
             // Remove code_admin entry
-            $this->query($this->queries['remove'][1], $code);
+            $rc += $this->query($this->queries['remove'][1], $code);
             // Remove remaining codes
-            $this->query($this->queries['remove'][2], $code);
+            $rc += $this->query($this->queries['remove'][2], $code);
         }
+
+        return $rc;
     }
+
     // -----------------------------------------------------------------------
     // PROTECTED
     // -----------------------------------------------------------------------
@@ -799,6 +804,12 @@ class UCT
         $args = func_get_args();
         // Get query
         $query = array_shift($args);
+
+        // Quote arguments!
+        foreach ($args as &$value) {
+            $value = $this->db->real_escape_string($value);
+        }
+
         // Replace remaining arguments
         $query = vsprintf($query, $args);
 
@@ -806,17 +817,7 @@ class UCT
             if (is_scalar($result)) {
                 return $result;
             }
-
-            if (method_exists($result, 'fetch_all')) {
-                // PHP 5 >= 5.3.0
-                $data = $result->fetch_all(MYSQLI_ASSOC);
-            } else {
-                $data = [];
-                while ($row = $result->fetch_assoc()) {
-                    $data[] = $row;
-                }
-            }
-
+            $data = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
         } else {
             $data = null;

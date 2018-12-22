@@ -58,7 +58,6 @@ class Middleware
         }
 
         $view['native'] = $c['editor']->native;
-        $view['title']  = isset($cfg['TITLE']) ? $cfg['TITLE'] : 'Universal Code Translation';
 
         if (!empty($flash = Session::flash())) {
             if (strpos($flash[0], '|')) {
@@ -72,6 +71,19 @@ class Middleware
         $loggedIn = Session::loggedIn();
         $language = Session::get('language');
 
+        $adminNav = $exclude = [];
+
+        // Exclude all system code sets
+        foreach ($c['editor']->fullSetAssoc('code_set', $language) as $set => $data) {
+            if ($data['order'] < 0) {
+                // $adminNav[$set] = $data['desc'];
+                $set != 'code_admin' && $adminNav[] = $set;
+                $exclude[] = $set;
+            }
+        }
+
+        $view['adminNav'] = array_reverse($adminNav);
+
         $view['IndexCodeSetSelect'] = $c['editor']->selectOptions(
             'code_set',
             $language,
@@ -80,7 +92,7 @@ class Middleware
                 'blank_prompt'  => $c->i18n->AllCodes,
                 'subset'        => $c->config['CODESETS'],
                 'value'         => isset($args['set']) ? $args['set'] : '',
-                'exclude'       => $loggedIn ? [] : ['code_set', 'code_lang', 'code_editor', 'code_editor_cfg'],
+                'exclude'       => $exclude
             ]
         );
 
@@ -113,6 +125,7 @@ class Middleware
         $view['logged_in']    = $loggedIn;
         $view['can_add']      = $loggedIn;
         $view['can_edit']     = true;
+        $view['can_rename']   = true;
         $view['can_delete']   = $loggedIn;
         $view['text_length']  = isset($cfg['TEXTLENGTH']) ? $cfg['TEXTLENGTH'] : PHP_INT_MAX;
         $view['layout']       = $cfg['LAYOUT'];
@@ -120,9 +133,8 @@ class Middleware
         $view['version_date'] = $cfg['VERSION_DATE'];
         $view['languages']    = $c['editor']->languageSet('code_lang', $language);
         $view['lang_count']   = $c['editor']->activeLanguages();
+        $view['cloned']       = Session::take('cloned');
 
-        $response = $next($request, $response);
-
-        return $response;
+        return $next($request, $response);
     }
 }

@@ -72,6 +72,14 @@ class I18N
         return $this->render($code, $args);
     }
 
+    /**
+     * Shortcut for templates when a subcode like "row.cell.code" is needed
+     */
+    public function md($text)
+    {
+        return $this->md->renderInline($text);
+    }
+
     // -----------------------------------------------------------------------
     // PROTECTED
     // -----------------------------------------------------------------------

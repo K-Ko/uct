@@ -66,10 +66,10 @@ $app->post(
         // Admin entry
         $this['editor']->adminPut($params['set'], ['slave' => 1]);
         // Code set entry
-        $this['editor']->slave('code_set', $params['set'], $params['desc']);
+        $this['editor']->putSlave('code_set', $params['set'], $params['desc']);
         // Parameter entries
         foreach ($data as $order => $code) {
-            $this['editor']->put(
+            $this['editor']->putData(
                 $params['set'],
                 $this['editor']->native,
                 $code,

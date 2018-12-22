@@ -12,6 +12,15 @@ a {
     text-decoration: none !important;
 }
 
+.table-hover tbody tr:hover {
+    background-color: moccasin;
+}
+
+.table th,
+.table td {
+    vertical-align: baseline !important;
+}
+
 th.count,
 td.count {
     font-family: monospace;
@@ -73,6 +82,27 @@ table .form-inline {
 
 .text-italic {
     font-style: italic;
+}
+
+/* list */
+tr.code-inactive {
+    /* .text-muted */
+    color: #6c757d;
+}
+
+a.code-inactive,
+button.code-inactive {
+    display: none;
+}
+
+tr.code-inactive a.code-active,
+tr.code-inactive button.code-active {
+    display: none;
+}
+
+tr.code-inactive a.code-inactive,
+tr.code-inactive button.code-inactive {
+    display: inline-block;
 }
 
 /* Sticky footer styles

@@ -115,6 +115,10 @@ class Editor extends UCT
         $this->query(
             $this->sql($this->queries['toggle'], $set, $this->native, $code)
         );
+
+        $data = $this->get($set, $this->native, $code);
+
+        return $data ? $data['active'] : 0;
     }
 
     /**
@@ -127,7 +131,7 @@ class Editor extends UCT
         if ($old) {
             // Update
             if ($desc <> $old['desc']) {
-                $this->put(
+                $this->putData(
                     $set,
                     $this->native,
                     $code,
@@ -139,7 +143,7 @@ class Editor extends UCT
             }
         } else {
             // Insert
-            $this->put($set, $this->native, $code, $desc);
+            $this->putData($set, $this->native, $code, $desc);
         }
     }
 
@@ -248,9 +252,12 @@ class Editor extends UCT
     /**
      * Get the hint for a code
      */
-    public function getHint($set, $code)
+    public function getHint($set, $code, $lang = null)
     {
-        $result = $this->query($this->queries['get-hint'], $set, $this->native, $code);
+        if (!$lang) {
+            $lang = $this->native;
+        }
+        $result = $this->query($this->queries['get-hint'], $set, $lang, $code);
         return isset($result[0]['hint']) ? $result[0]['hint'] : '';
     }
 
@@ -259,8 +266,8 @@ class Editor extends UCT
      */
     public function setHint($set, $code, $hint)
     {
-        $sql = $this->sql($this->queries['set-hint'], $hint, $set, $this->native, $code);
-        $this->query($sql);
+        $this->query($this->queries['set-hint'], $hint, $set, $this->native, $code);
+        return $this;
     }
 
     /**
@@ -273,6 +280,32 @@ class Editor extends UCT
             $counts[$row['set']][$row['lang']] = $row['count'];
         }
         return $counts;
+    }
+
+    /**
+     * Clone a code
+     */
+    public function clone($set, $code, $format = '%s_COPY')
+    {
+        $new_code = sprintf($format, $code);
+
+        foreach ($this->query($this->queries['clone'], $set, $code) as $row) {
+            $this->putData(
+                $row['set'],
+                $row['lang'],
+                $new_code,
+                $row['desc'],
+                $row['quantity'],
+                $row['order'],
+                $row['active']
+            );
+
+            if ($row['hint'] != '') {
+                $this->setHint($row['set'], $new_code, $row['hint']);
+            }
+        }
+
+        return $new_code;
     }
 
     // -----------------------------------------------------------------------
@@ -316,6 +349,10 @@ class Editor extends UCT
             'UPDATE `{TABLE}`
                 SET `active` = 1 - `active`
               WHERE `set` = "%s" AND `lang` = "%s" AND `code` = "%s"',
+
+        'clone' =>
+            'SELECT * FROM `{TABLE}`
+              WHERE `set` = "%s" AND `code` = "%s"',
 
         'delete' =>
             'DELETE FROM `{TABLE}`

@@ -1,0 +1,8 @@
+.navbar-light .navbar-brand {
+    padding-top: 0.5rem;
+    font-style: italic;
+    font-weight: bold;
+    font-family: monospace;
+    margin-right: 0.25em;
+    color: #fdd72f;
+}

@@ -18,7 +18,7 @@ $app->post(
             $this['editor']->toggleActive($params['set'], $params['code']);
             Session::flash('CodeStateToggled');
         } else {
-            Session::flash('danger|CodeMissing');
+            Session::flash('CodeMissing|danger');
         }
 
         return $response->withRedirect(
