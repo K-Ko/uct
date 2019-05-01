@@ -1,0 +1,96 @@
+{% extends 'layout.twig' %}
+{% block content %}
+    <div class="row">
+        <div class="col">
+            <table class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th class="w-1">
+                            {{ t.code_ext__AdminUser_User }}</th>
+                        <th></th>
+                        <th class="w-1">{{ t.code_ext__AdminUser_Changed }}</th>
+                        <th class="w-1" colspan="2"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr class="{{ user.active == 0 ? 'text-muted' }}">
+                            <th>
+                                {{ user.name }}</th>
+                            <td>
+                                <button class="btn btn-secondary" data-user="{{ user.name }}" data-toggle="tooltip" title="{{ t.code_ext__AdminUser_ChangePassword|e }}">
+                                    <i class="fa fa-pencil"></i>
+                                </button>
+                                <form class="form-inline d-none" method="post">
+                                    <input type="hidden" name="user" value="{{ user.name }}"/>
+                                    <label class="form-label mr-2" for="{{ user.name }}1">{{ t.code_ext__AdminUser_Password }}:</label>
+                                    <input id="{{ user.name }}1" type="password" class="form-control" name="pw1" required/>
+                                    <label class="form-label mx-2" for="{{ user.name }}2">{{ t.code_ext__AdminUser_RepeatPassword }}:</label>
+                                    <input id="{{ user.name }}2" type="password" class="form-control" name="pw2" required/>
+                                    <button type="submit" name="action" value="save" class="btn btn-sm btn-success ml-3" data-toggle="tooltip" title="{{ t.code_ext__AdminUser_Save }}">
+                                        <i class="fa fa-floppy-o"></i>
+                                    </button>
+                                </form>
+                                {{ user.hint }}
+                            </td>
+                            <td class="text-nowrap">{{ user.changed }}</td>
+                            <td class="pr-0">
+                                <form class="form-inline" method="post" role="group">
+                                    <input type="hidden" name="user" value="{{ user.name }}"/>
+                                    <button type="submit" name="action" value="toggle" class="btn btn-sm btn-primary mr-1" data-toggle="tooltip" title="{{ t.h('code_ext::AdminUser_' ~ (user.active ? 'Deactivate' : 'Activate'))|e }}">
+                                        <i class="fa fa-{{ user.active ? 'ban' : 'check' }}"></i>
+                                    </button>
+                                </form>
+                            </td>
+                            <td class="pl-0">
+                                <form class="form-inline" method="post" role="group">
+                                    <input type="hidden" name="user" value="{{ user.name }}"/>
+                                    <button type="submit" name="action" value="delete" class="btn btn-sm btn-danger" data-toggle="tooltip" title="{{ t.code_ext__AdminUser_Delete|e }}">
+                                        <i class="fa fa-trash-o"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot
+                    class="thead-dark">
+                    {# Add user #}
+                    <tr>
+                        <th colspan="5">
+                            <form class="form-inline" method="post">
+                                <label class="form-label mr-2" for="pw_new_1">{{ t.code_ext__AdminUser_User }}:</label>
+                                <input class="form-control mr-lg-3" name="user" required type="text"/>
+                                <div class="w-100 d-xl-none"></div>
+                                <label class="form-label mr-2 mt-2 mt-xl-0" for="pw_new_1">{{ t.code_ext__AdminUser_Password }}:</label>
+                                <input
+                                    class="form-control mr-lg-3 mt-2 mt-xl-0"
+                                    id="pw_new_1"
+                                    name="pw1"
+                                    required
+                                    type="password"/>
+                                <div class="w-100 d-lg-none"></div>
+                                <label class="form-label mr-2 mt-2 mt-xl-0" for="pw_new_2">{{ t.code_ext__AdminUser_RepeatPassword }}:</label>
+                                <input
+                                    class="form-control mr-3 mt-2 mt-xl-0"
+                                    id="pw_new_2"
+                                    name="pw2"
+                                    required
+                                    type="password"/>
+                                <button type="submit" name="action" value="save" class="btn btn-success mt-2 mt-xl-0" data-toggle="tooltip" title="{{ t.code_ext__AdminUser_Save }}">
+                                    <i class="fa fa-fw fa-floppy-o"></i>
+                                    {{ t.Save }}
+                                </button>
+                            </form>
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-muted text-md-center">
+            {{ t.code_ext__AdminUser_InactiveUserHint }}
+        </div>
+    </div>
+{% endblock %}

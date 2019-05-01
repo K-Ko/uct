@@ -1,0 +1,10 @@
+{# Add password self-service left from user name #}
+{% if user %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ pathFor('Extension Pss') }}">
+            {{ t.code_ext__pss_ChangePassword }}
+        </a>
+    </li>
+    {# Add a kind of separator #}
+    <li class="nav-item nav-link px-0">|</li>
+{% endif %}

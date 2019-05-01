@@ -1,0 +1,57 @@
+{% extends 'layout.twig' %}
+{% block content %}
+    <div class="row">
+        <div class="col text-center h3">
+            {{ t.code_ext__extensions_Extensions }}
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>
+                            {{ t.code_ext__extensions_Name }}</th>
+                        <th>
+                            {{ t.code_ext__extensions_Description }}</th>
+                        <th class="text-center">
+                            {{ t.code_ext__extensions_Version }}</th>
+                        <th class="text-center">
+                            {{ t.code_ext__extensions_DateEnabled }}</th>
+                        <th class="w-1"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        {# Check row.date to find out, if the extension is enabled #}
+                        <tr class="{{ row.date ? 'alert-success' }}">
+                            <th>
+                                {{ row.name }}</th>
+                            <td>
+                                {{ row.description }}</td>
+                            <td class="text-center">{{ row.version }}</td>
+                            <td class="text-center">{{ row.date }}</td>
+                            <td>
+                                <form class="form-inline" method="post" action="{{ pathFor('Extensions toggle', { name: row.class }) }}">
+                                    <button type="submit" class="btn btn-sm btn-light" data-toggle="tooltip" title="{{ t.h('code_ext::extensions_' ~ (row.date ? 'Disable' : 'Enable'))|e }}">
+                                        <i class="fa fa-{{ row.date ? 'ban' : 'check' }}"></i>
+                                    </button>
+                                </form>
+                                {% if row.link %}
+                                    <a class="btn btn-sm btn-light" href="{{ row.link }}" target="_blank">
+                                        <i class="fa fa-external-link"></i>
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row border-top pt-3">
+        <div class="col text-md-center">
+            {{ t.code_ext__extensions_InstallHint }}
+        </div>
+    </div>
+{% endblock %}

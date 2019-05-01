@@ -1,0 +1,5 @@
+{% for msg in flash('') %}
+    <div class="alert alert-{{ msg.1 }}">
+        {{ t.h(msg.0) }}
+    </div>
+{% endfor %}

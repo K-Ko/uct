@@ -1,0 +1,88 @@
+{% extends 'layout.twig' %}
+{# ----------------------------------------------------------------------- #}
+{% block content %}
+    {{ include('inc/code-select.twig') }}
+    <div class="row border-top mb-3">
+        <div class="col text-center h3">
+            {{ t.CreateSlaveSet }}
+        </div>
+    </div>
+    <form action="{{ pathFor('POST slave') }}" method="post">
+        <div class="row form-group">
+            <label class="col-md-3 col-form-label text-bold" for="set-code">{{ t.Code }}</label>
+            <div class="col col-sm-6 col-md-4 col-lg-3">
+                <input
+                    class="form-control"
+                    id="set-code"
+                    maxlength="16"
+                    name="set"
+                    required="required"
+                    type="text"/>
+                <small class="form-text">{{ t.CodeMaxChars(16) }}</small>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-md-3 col-form-label" for="set-code">{{ t.Name }}</label>
+            <div class="col col-lg-7 col-xl-6">
+                <input
+                    class="form-control"
+                    id="set-code"
+                    maxlength="50"
+                    name="desc"
+                    required="required"
+                    type="text"/>
+                <small class="form-text">{{ t.CodeMaxChars(50) }}</small>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-md-3 col-form-label" for="input-order">{{ t.CodeOrderIncrement }}</label>
+            <div class="col">
+                <div class="input-group input-group-sm spinner" data-trigger="spinner">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text px-0">
+                            <button class="btn btn-link btn-sm text-body" data-spin="down">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <input
+                        class="form-control"
+                        data-rule="defaults"
+                        id="input-order"
+                        name="order"
+                        pattern="[0-9]*"
+                        type="text"
+                        value="10"/>
+                    <div class="input-group-append">
+                        <span class="input-group-text px-0">
+                            <button class="btn btn-link btn-sm text-body" data-spin="up">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-md-3 col-form-label" for="slave-data">{{ t.SlaveSetData }}</label>
+            <div class="col">
+                <textarea
+                    class="form-control"
+                    id="slave-data"
+                    name="data"
+                    required="required"
+                    rows="15"></textarea>
+                <small class="form-text">{{ t.SlaveSetDataHint }}</small>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col">
+                <button class="btn btn-block btn-primary" type="submit">
+                    <i class="fa fa-floppy-o"></i>
+                    {{ t.Save }}
+                </button>
+            </div>
+        </div>
+    </form>
+{% endblock %}

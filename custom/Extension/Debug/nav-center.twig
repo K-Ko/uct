@@ -1,0 +1,10 @@
+{# Add password self-service left from user name #}
+{% if user %}
+    <li class="nav-link disabled">
+        [
+        {% for permission, value in can %}
+            {{ value ? permission }}
+        {% endfor %}
+        ]
+    </li>
+{% endif %}

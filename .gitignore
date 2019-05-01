@@ -1,7 +1,14 @@
-.env
+document_errors/
+logs/
+private/
 
+config.local.php
+
+app/extensions.php
 cache/*
-custom/*
+custom/extension/*
+custom/tpl/*
+log/*
 tpl/custom/*
 sql/code_lang*
 

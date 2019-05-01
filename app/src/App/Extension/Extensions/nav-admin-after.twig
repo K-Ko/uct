@@ -1,0 +1,4 @@
+{% if can.admin %}
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item" href="{{ pathFor('Extensions list') }}">{{ t.code_ext__extensions_Extensions }}</a>
+{% endif %}

@@ -1,0 +1,77 @@
+{% macro input_hidden(name, value) %}
+    <input type="hidden" name="{{ name }}" value="{{ value|e }}"/>
+{% endmacro %}
+{# ----------------------------------------------------------------- #}
+{% macro input_row(type, name, value, label, hint) %}
+    <div class="form-row">
+        <label class="col-md-3 col-form-label">{{ label }}</label>
+        <div class="col form-group">
+            <div class="custom-control custom-{{ type }}">
+                <input id="{{ type }}-{{ name }}" class="custom-control-input" type="{{ type }}" name="{{ name|e }}" value="1" {{ value ? 'checked' }}/>
+                <label for="{{ type }}-{{ name }}" class="custom-control-label text-muted">
+                    {{ hint }}
+                </label>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+{# ----------------------------------------------------------------- #}
+{% macro input_checkbox(name, value, label, hint) %}
+    <div class="form-row">
+        <label class="col-md-3">{{ label }}</label>
+        <div class="col form-group">
+            <div class="custom-control custom-checkbox">
+                <input id="cb-{{ name }}" class="custom-control-input" type="checkbox" name="{{ name|e }}" value="1" {{ value ? 'checked' }}/>
+                <label for="cb-{{ name }}" class="custom-control-label text-muted">
+                    {{ hint }}
+                </label>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+{# ----------------------------------------------------------------- #}
+{% macro input_admin_checkbox(name, checked, label, hint) %}
+    <div class="form-row">
+        <label class="col-md-3">{{ label }}</label>
+        <div class="col form-group">
+            <div class="custom-control custom-checkbox">
+                <input id="admin-cb-{{ name }}" class="custom-control-input" type="checkbox" name="admin[]" value="{{ name|e }}" {{ checked ? 'checked' }}/>
+                <label
+                    class="custom-control-label text-muted"
+                    for="admin-cb-{{ name }}">
+                    {{ hint }}
+                </label>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+{# ----------------------------------------------------------------- #}
+{% macro input_admin_radio(name, checked, label, hint) %}
+    <div class="form-row">
+        <label class="col-md-3">{{ label }}</label>
+        <div class="col form-group">
+            <div class="custom-control custom-radio">
+                <input id="admin-rb-{{ name }}" class="custom-control-input" type="radio" name="admin[]" value="{{ name|e }}" {{ checked ? 'checked' }}/>
+                <label
+                    class="custom-control-label text-muted"
+                    for="admin-rb-{{ name }}">
+                    {{ hint }}
+                </label>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+{# ----------------------------------------------------------------- #}
+{% macro adminflags(admin) %}
+    {% spaceless %}
+        {% if admin.param %}
+            <span data-toggle="tooltip" title="{{ t.ParameterSet|e }}">P</span>
+        {% endif %}
+        {% if admin.slave %}
+            <span data-toggle="tooltip" title="{{ t.SlaveSet|e }}">S</span>
+        {% endif %}
+        {% if admin.multi %}
+            <span data-toggle="tooltip" title="{{ t.MultilineSet|e }}">M</span>
+        {% endif %}
+    {% endspaceless %}
+{% endmacro %}

@@ -1,0 +1,79 @@
+{% extends 'layout.twig' %}
+{# ----------------------------------------------------------------------- #}
+{% block content %}
+    <div class="row mb-3">
+        <div class="col text-center">
+            <div class="h2">{{ t.Applications }}</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <table class="list table table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>
+                            {{ t.AppName }}
+                        </th>
+                        <th></th>
+                        <th>
+                            {{ t.Changed }}
+                        </th>
+                        <th class="w-1" colspan="3"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        <tr class="{{ not row.active ? 'code-inactive' }}">
+                            <th>
+                                {{ t.md(row.desc) }}
+                            </th>
+                            <td>
+                                {{ t.md(row.hint) }}
+                            </td>
+                            <td>
+                                {{ row.changed }}
+                            </td>
+                            {% if row.code == 0 %}
+                                <td class="font-weight-bold" colspan="3">{{ t.Immutable }}</td>
+                                {% else %}
+                                <td class="pr-1">
+                                    <a href="{{ pathFor('app-edit', {'id': row.code}) }}" class="btn btn-sm btn-primary" data-toggle="tooltip" title="{{ t.Edit|e }}">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                </td>
+                                <td class="px-1">
+                                    <form class="form-inline" action="{{ pathFor('app-toggle', {id: row.code}) }}" method="post">
+                                        <button type="submit" class="btn btn-sm btn-secondary code-active" data-code="{{ row.code }}" data-action="toggle" data-toggle="tooltip" title="{{ t.ToggleState }}">
+                                            <i class="fa fa-ban"></i>
+                                        </button>
+                                        <button type="submit" class="btn btn-sm btn-secondary code-inactive" data-code="{{ row.code }}" data-action="toggle" data-toggle="tooltip" title="{{ t.ToggleState }}">
+                                            <i class="fa fa-check"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                                <td class="pl-1">
+                                    <form class="form-inline" action="{{ pathFor('app-delete', {id: row.code}) }}" method="post">
+                                        <button type="submit" class="confirm-delete btn btn-sm btn-danger code-active" data-code="{{ row.code }}" data-action="delete" data-toggle="tooltip" title="{{ t.Delete }}">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button>
+                                        <button type="submit" class="confirm-delete btn btn-sm btn-secondary code-inactive" data-code="{{ row.code }}" data-action="delete" data-toggle="tooltip" title="{{ t.Delete }}">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <a class="btn btn-primary" href="{{ pathFor('app-edit') }}">
+                <i class="fa fa-fw fa-plus"></i>
+                {{ t.NewApplication }}
+            </a>
+        </div>
+    </div>
+{% endblock %}

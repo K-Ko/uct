@@ -1,0 +1,138 @@
+{% extends 'layout.twig' %}
+{# ----------------------------------------------------------------------- #}
+{% block content %}
+    {{ include('inc/code-select.twig') }} {% import _self as self %}
+    <div class="row text-center mb-3">
+        <div class="col-md text-md-left">
+            <div class="h2">{{ set_desc }}</div>
+            {% if admin.param %}
+                <p class="text-muted">
+                    {{ t.ParameterSetHint }} {% elseif admin.slave %}
+                    {{ t.SlaveSetHint }}
+                </p>
+            {% endif %}
+        </div>
+        {% if app.id != 0 and can.edit %}
+            <div class="col-md text-md-right pt-md-2">
+                <ahref="{{pathFor('edit',{'set':set})}}" class="btn btn-success">
+                    {{ t.AddCode }}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="col">
+            <table class="list table table-striped table-hover {{set_rows|length > 100 ?
+                    'table-sm'}}">
+                <thead class="thead-dark">
+                    <tr>
+                        {% if set == 'code_set' %}
+                            <th class="w-1">
+                                <i class="fa fa-sliders"></i>
+                            </th>
+                        {% endif %}
+                        <th class="w-1 text-right">
+                            <i class="fa fa-sort-amount-asc"></i>
+                        </th>
+                        <th
+                            class="w-1" style="min-width:12rem">
+                            {# Table in table to hold text and input in line :-) #}
+                            <table class="table mb-0">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th class="p-0">{{ t.Code }}</th>
+                                        <th class="py-0">
+                                            <input id="filter-code" type="text" class="form-inline p-0 {{ set_rows|length < 50 ? 'd-none' }}" style="width:7rem" maxlength="10" data-toggle="tooltip" title="{{ t.RegexPossible }}" placeholder="filter ..."/>
+                                        </th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </th>
+                        <th {{ lang2 ? 'colspan="2"' }}>{{ t.Description }}</th>
+                        <th class="w-1" colspan="4"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in set_rows %}
+                        <tr class="{{ not row.active ? 'code-inactive' }}" data-toggle="filter" data-filter="{{ row.code }}">
+                            {% if set == 'code_set' %}
+                                <td class="text-center">
+                                    {{ macros.adminflags(row) }}
+                                </td>
+                            {% endif %}
+                            <td class="text-right">{{ row.order }}</td>
+                            <td>
+                                {{ row.code }}</td>
+                            {% if lang2 %}
+                                <td class="w-1 small">{{ lang }}</td>
+                            {% endif %}
+                            <td>
+                                {{ (row.desc|length > text_length ? row.desc|slice(0, text_length) ~ ' ...' : row.desc)|nl2br }}
+                            </td>
+                            <td class="pr-1">
+                                {% if can.translate %}
+                                    <a href="{{ pathFor('edit', {'set': set, 'code': row.code, 'lang': lang, 'lang2': lang2}) }}" class="btn btn-sm btn-primary" data-toggle="tooltip" title="{{ t.Edit|e }}">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    {% else %}
+                                    <a href="{{ pathFor('edit', {'set': set, 'code': row.code, 'lang': lang, 'lang2': lang2}) }}" class="btn btn-sm btn-primary" data-toggle="tooltip" title="{{ t.Show|e }}">
+                                        <i class="fa fa-search"></i>
+                                    </a>
+                                {% endif %}
+                            </td>
+                            <td class="px-1">
+                                {% if can.edit %}
+                                    <a href="{{ pathFor('edit', {'set': set}) }}?clone={{ row.code }}" class="btn btn-sm btn-primary" data-toggle="tooltip" title="{{ t.CopyCode|e }}">
+                                        <i class="fa fa-clone"></i>
+                                    </a>
+                                {% endif %}
+                            </td>
+                            <td class="px-1">
+                                {% if not(row.code starts with 'code_') and can.edit %}
+                                    <button type="submit" class="btn btn-sm btn-secondary code-active" data-set="{{ set }}" data-code="{{ row.code }}" data-action="toggle" data-toggle="tooltip" title="{{ t.ToggleState }}">
+                                        <i class="fa fa-ban"></i>
+                                    </button>
+                                    <button type="submit" class="btn btn-sm btn-secondary code-inactive" data-set="{{ set }}" data-code="{{ row.code }}" data-action="toggle" data-toggle="tooltip" title="{{ t.ToggleState }}">
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                {% endif %}
+                            </td>
+                            <td class="pl-1">
+                                {% if not(row.code starts with 'code_') and can.edit %}
+                                    <button class="confirm-delete btn btn-sm btn-danger code-active" data-set="{{ set }}" data-code="{{ row.code }}" data-action="delete" data-toggle="tooltip" title="{{ t.Delete }}">
+                                        <i class="fa fa-trash-o"></i>
+                                    </button>
+                                    <button class="confirm-delete btn btn-sm btn-secondary code-inactive" data-set="{{ set }}" data-code="{{ row.code }}" data-action="delete" data-toggle="tooltip" title="{{ t.Delete }}">
+                                        <i class="fa fa-trash-o"></i>
+                                    </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% if lang2 %}
+                            <tr class="{{ row.desc2 == '' ? 'alert-warning'}} {{ not row.active ? 'code-inactive' }}" data-toggle="filter" data-filter="{{ row.code }}">
+                                <td colspan="{{ set == 'code_set' ? 3 : 2 }}"></td>
+                                <td class="small">{{ lang2 }}</td>
+                                <td>
+                                    {{ (row.desc2|length > text_length ? row.desc2|slice(0, text_length) ~ ' ...' : row.desc2)|nl2br }}
+                                </td>
+                                <td colspan="4"></td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+                {% set colspan = set == 'code_set' ? 4 : 3 %}
+                {% if lang2 %}
+                    {% set colspan = colspan + 1 %}
+                {% endif %}
+                <tfoot class="thead-dark">
+                    <tr>
+                        <th colspan="{{ colspan }}">
+                            {{ t.Records(rec_count) }}
+                        </th>
+                        <th colspan="4"></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+{% endblock %}

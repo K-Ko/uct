@@ -1,26 +1,38 @@
 {
     "require": {
-        "slim/slim": "^3.9",
-        "twig/twig": "<2",
-        "slim/twig-view": "^2.3",
+        "kanellov/slim-twig-flash": "^0.2.0",
         "kaoken/markdown-it-php": "^8.4",
+        "slim/slim": "^3.9",
+        "slim/twig-view": "^2.3",
         "symfony/console": "^3.4",
-        "vlucas/phpdotenv": "^2.4"
+        "twig/twig": "<2"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.1"
     },
+    "config": {
+        "sort-packages": true
+    },
+    "optimize-autoloader": false,
     "autoload": {
         "psr-4": {
-            "": ["app/"]
+            "": [
+                "app/src/"
+            ],
+            "App\\": [
+                "custom/"
+            ]
         }
     },
     "scripts": {
         "post-install-cmd": "@cc",
-        "post-update-cmd":  "@cc",
+        "post-update-cmd": "@cc",
         "cc": "rm -rf cache/*",
-        "check": [ "@cbf", "@cs" ],
-        "cbf": "phpcbf -sp --colors --standard=PSR2 app/* routes/* sql/*",
-        "cs":  "phpcs  -sp --colors --standard=PSR2 app/* routes/* sql/*"
+        "check": [
+            "@cbf",
+            "@cs"
+        ],
+        "cs": "phpcs  -sp --colors --standard=PSR2 app/src/* app/routes/* custom/Extension/*",
+        "cbf": "phpcbf -sp --colors --standard=PSR2 app/src/* app/routes/* custom/Extension/*"
     }
 }

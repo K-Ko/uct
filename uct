@@ -7,18 +7,24 @@ require __DIR__.'/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
 
-// Load environment, if exists
-if (is_file(__DIR__ . '/.env')) {
-    $dotenv = new Dotenv\Dotenv(__DIR__);
-    $dotenv->load();
-}
+$application = new Application(
+	'UCT Console',
+	implode(' / ', file(__DIR__ . '/.version', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES))
+);
 
 // Register commands
-$application = new Application();
+$application->add(new Command\AppInit(['en', 'de', 'fr']));
 
-$application->add(new Command\AppInitCommand());
-$application->add(new Command\SqlBootstrapCommand());
-$application->add(new Command\SqlListCommand());
-$application->add(new Command\SqlLoadCommand());
+$application->add(new Command\SqlList());
+$application->add(new Command\SqlLoad());
+
+$application->add(new Command\UserAdd());
+#$application->add(new Command\UserDelete());
+#$application->add(new Command\UserList());
+
+$application->add(new Command\AclAdd());
+#$application->add(new Command\AclDelete());
+#$application->add(new Command\AclList());
+
 
 $application->run();
